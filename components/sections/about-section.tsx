@@ -27,39 +27,54 @@ const AboutSection = forwardRef<HTMLElement, AboutSectionProps>((props, ref) => 
       transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
     >
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center space-y-10">
-          {/* 三维头像容器 */}
-          <motion.div 
-            className="relative inline-block group perspective-1000"
-            whileHover={{ 
-              rotateY: 5,
-              rotateX: -3,
-              transition: { 
-                type: "spring",
-                stiffness: 300,
-                damping: 15
-              }
-            }}
-          >
-            <div className="relative z-10 p-1 bg-gradient-to-br from-foreground/10 to-background rounded-2xl shadow-2xl transform-style-preserve-3d">
-              <div className="absolute inset-0 bg-primary/5 rounded-xl blur-xl" />
-              
-              <Image
-                src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-no-bg%20(1).png"
-                alt="技术苦行僧照片"
-                width={160}
-                height={160}
-                className="rounded-xl border-2 border-foreground/20 hover:border-primary/50 transition-colors duration-300 shadow-lg"
-              />
-            </div>
+        <div className="max-w-4xl mx-auto text-center space-y-16">
+          <div className="flex flex-col items-center space-y-12">
+            {/* 标题 */}
+            <motion.h2
+              className="text-5xl md:text-6xl font-mono font-bold text-foreground relative inline-block"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "circOut" }}
+            >
+              <span className="relative">
+                技术苦行僧
+                <div className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-foreground/50 to-transparent" />
+              </span>
+            </motion.h2>
 
-            {/* 全息投影效果 */}
-            <div className="absolute inset-0 bg-[conic-gradient(from_230deg,theme(colors.primary),theme(colors.secondary),theme(colors.primary))] opacity-10 blur-2xl -z-10" />
-          </motion.div>
+            {/* 三维头像容器 */}
+            <motion.div 
+              className="relative inline-block group perspective-1000"
+              whileHover={{ 
+                rotateY: 5,
+                rotateX: -3,
+                transition: { 
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 15
+                }
+              }}
+            >
+              <div className="relative z-10 p-1 bg-gradient-to-br from-foreground/10 to-background rounded-2xl shadow-2xl transform-style-preserve-3d">
+                <div className="absolute inset-0 bg-primary/5 rounded-xl blur-xl" />
+                
+                <Image
+                  src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-no-bg%20(1).png"
+                  alt="技术苦行僧照片"
+                  width={160}
+                  height={160}
+                  className="rounded-xl border-2 border-foreground/20 hover:border-primary/50 transition-colors duration-300 shadow-lg"
+                />
+              </div>
+
+              {/* 全息投影效果 */}
+              <div className="absolute inset-0 bg-[conic-gradient(from_230deg,theme(colors.primary),theme(colors.secondary),theme(colors.primary))] opacity-10 blur-2xl -z-10" />
+            </motion.div>
+          </div>
 
           {/* 技术标签 */}
           <motion.div 
-            className="flex flex-wrap justify-center gap-3"
+            className="flex flex-wrap justify-center gap-3 mt-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -71,7 +86,7 @@ const AboutSection = forwardRef<HTMLElement, AboutSectionProps>((props, ref) => 
 
           {/* 技能矩阵 */}
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12"
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-16"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
@@ -102,7 +117,7 @@ const AboutSection = forwardRef<HTMLElement, AboutSectionProps>((props, ref) => 
 
           {/* 发展路线 */}
           <motion.div
-            className="mt-36"
+            className="mt-48"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
