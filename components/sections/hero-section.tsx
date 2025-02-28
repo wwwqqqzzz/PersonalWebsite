@@ -19,7 +19,7 @@ interface HeroSectionProps {
   className?: string
 }
 
-const HeroSection = forwardRef<HTMLElement, HeroSectionProps>((props, ref) => {
+const HeroSection = forwardRef<HTMLDivElement, HeroSectionProps>((props, ref) => {
   const mousePosition = useMousePosition()
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
@@ -28,7 +28,7 @@ const HeroSection = forwardRef<HTMLElement, HeroSectionProps>((props, ref) => {
   const transformY = useTransform(mouseY, [-500, 500], [-15, 15])
 
   return (
-    <motion.section
+    <motion.div
       ref={ref}
       id="home"
       className="min-h-screen flex items-center justify-center relative overflow-hidden py-20 md:py-32"
@@ -178,7 +178,7 @@ const HeroSection = forwardRef<HTMLElement, HeroSectionProps>((props, ref) => {
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
         />
       </div>
-    </motion.section>
+    </motion.div>
   )
 })
 

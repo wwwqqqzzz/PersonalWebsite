@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, forwardRef } from "react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
@@ -44,9 +44,13 @@ const blogPosts = [
   },
 ]
 
-export default function BlogSection() {
-  const [hoveredIndex, setHoveredIndex] = useState(null)
-  const containerRef = useRef(null)
+interface BlogSectionProps {
+  className?: string
+}
+
+const BlogSection = forwardRef<HTMLDivElement, BlogSectionProps>((props, ref) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState(0)
 
   useEffect(() => {
@@ -63,59 +67,69 @@ export default function BlogSection() {
 
   return (
     <motion.div
-      ref={containerRef}
-      initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      viewport={{ once: true, margin: "-100px" }}
-      className="relative overflow-hidden"
+      ref={ref}
+      id="blog"
+      className="min-h-screen"
     >
       <motion.div
-        animate={{
-          x: containerWidth > 0 ? [-containerWidth, 0] : 0,
-        }}
-        transition={{
-          x: {
-            repeat: Number.POSITIVE_INFINITY,
-            repeatType: "loop",
-            duration: 20,
-            ease: "linear",
-          },
-        }}
-        className="flex gap-6"
+        ref={containerRef}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true, margin: "-100px" }}
+        className="relative overflow-hidden"
       >
-        {[...blogPosts, ...blogPosts].map((post, index) => (
-          <motion.div
-            key={`${post.id}-${index}`}
-            className={cn(
-              "flex-shrink-0 w-72 bg-card rounded-lg overflow-hidden shadow-lg transition-all duration-300",
-              hoveredIndex === index ? "scale-105" : "",
-            )}
-            onHoverStart={() => setHoveredIndex(index)}
-            onHoverEnd={() => setHoveredIndex(null)}
-          >
-            <div className="relative h-40">
-              <Image src={post.image || "/placeholder.svg"} alt={post.title} layout="fill" objectFit="cover" />
-            </div>
-            <div className="p-4">
-              <h3 className="text-lg font-bold mb-2">{post.title}</h3>
-              <p className="text-sm text-foreground/70 mb-4">{post.excerpt}</p>
-              <div className="flex justify-between items-center text-xs text-foreground/50">
-                <span>{post.date}</span>
-                <span>{post.readTime}</span>
+        <motion.div
+          animate={{
+            x: containerWidth > 0 ? [-containerWidth, 0] : 0,
+          }}
+          transition={{
+            x: {
+              repeat: Number.POSITIVE_INFINITY,
+              repeatType: "loop",
+              duration: 20,
+              ease: "linear",
+            },
+          }}
+          className="flex gap-6"
+        >
+          {[...blogPosts, ...blogPosts].map((post, index) => (
+            <motion.div
+              key={`${post.id}-${index}`}
+              className={cn(
+                "flex-shrink-0 w-72 bg-card rounded-lg overflow-hidden shadow-lg transition-all duration-300",
+                hoveredIndex === index ? "scale-105" : "",
+              )}
+              onHoverStart={() => setHoveredIndex(index)}
+              onHoverEnd={() => setHoveredIndex(null)}
+            >
+              <div className="relative h-40">
+                <Image src={post.image || "/placeholder.svg"} alt={post.title} layout="fill" objectFit="cover" />
               </div>
-            </div>
-            <div className="px-4 pb-4 flex flex-wrap gap-2">
-              {post.tags.map((tag) => (
-                <span key={tag} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        ))}
+              <div className="p-4">
+                <h3 className="text-lg font-bold mb-2">{post.title}</h3>
+                <p className="text-sm text-foreground/70 mb-4">{post.excerpt}</p>
+                <div className="flex justify-between items-center text-xs text-foreground/50">
+                  <span>{post.date}</span>
+                  <span>{post.readTime}</span>
+                </div>
+              </div>
+              <div className="px-4 pb-4 flex flex-wrap gap-2">
+                {post.tags.map((tag) => (
+                  <span key={tag} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </motion.div>
     </motion.div>
   )
-}
+})
+
+BlogSection.displayName = "BlogSection"
+
+export default BlogSection
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, forwardRef } from "react"
 import Image from "next/image"
 import { motion, AnimatePresence, useMotionValue, useTransform, useMotionTemplate, animate } from "framer-motion"
 import { ChevronLeft, ChevronRight, ExternalLink, Github, Code2, Zap } from "lucide-react"
@@ -105,7 +105,11 @@ const BLUR_INTENSITY = 80
 const SWIPE_THRESHOLD = 8000
 const AUTO_PLAY_DURATION = 12
 
-const ProjectsCarousel = () => {
+interface ProjectsSectionProps {
+  className?: string
+}
+
+const ProjectsSection = forwardRef<HTMLDivElement, ProjectsSectionProps>((props, ref) => {
   const [[currentIndex, direction], setState] = useState([0, 0])
   const [isInView, setInView] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -133,10 +137,11 @@ const ProjectsCarousel = () => {
   useHotkeys('space', () => setIsHovering(prev => !prev), [])
 
   // 视口检测
-  const [ref, entry] = useIntersectionObserver({ 
-    threshold: 0.1,
-    rootMargin: '100px'
+  const [intersectionRef, entry] = useIntersectionObserver({
+    threshold: 0.5,
   })
+
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setInView(entry?.isIntersecting || false)
@@ -163,7 +168,12 @@ const ProjectsCarousel = () => {
     setProgress(0)
   }
 
-  const handleDragEnd = (e: any, { offset, velocity }: any) => {
+  interface DragInfo {
+    offset: { x: number }
+    velocity: { x: number }
+  }
+
+  const handleDragEnd = (e: MouseEvent | TouchEvent | PointerEvent, { offset, velocity }: DragInfo) => {
     setIsDragging(false)
     const swipe = Math.abs(offset.x) * velocity.x
 
@@ -216,8 +226,9 @@ const ProjectsCarousel = () => {
 
   return (
     <div 
-      className="relative w-full max-w-7xl mx-auto px-4 py-24" 
       ref={ref}
+      id="projects"
+      className={`relative w-full max-w-7xl mx-auto px-4 py-24 ${props.className || ''}`} 
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       role="region"
@@ -241,7 +252,7 @@ const ProjectsCarousel = () => {
       </div>
 
       <motion.div
-        ref={carouselRef}
+        ref={containerRef}
         className="relative h-[720px] rounded-3xl border border-foreground/10 bg-gradient-to-br from-background/80 to-background/20 backdrop-blur-xl shadow-2xl overflow-hidden"
         style={{ 
           transform: transform,
@@ -432,7 +443,9 @@ const ProjectsCarousel = () => {
       </motion.div>
     </div>
   )
-}
+})
 
-export default ProjectsCarousel
+ProjectsSection.displayName = "ProjectsSection"
+
+export default ProjectsSection
 

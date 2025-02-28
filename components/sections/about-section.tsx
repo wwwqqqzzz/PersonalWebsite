@@ -9,7 +9,7 @@ interface AboutSectionProps {
   className?: string
 }
 
-const AboutSection = forwardRef<HTMLElement, AboutSectionProps>((props, ref) => {
+const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) => {
   const mouse = useMousePosition()
   const techStack = [
     { name: "Vue3", level: 0.9 },
@@ -18,7 +18,7 @@ const AboutSection = forwardRef<HTMLElement, AboutSectionProps>((props, ref) => 
   ]
 
   return (
-    <motion.section
+    <motion.div
       ref={ref}
       id="about"
       className="min-h-screen flex items-center justify-center relative overflow-hidden py-20 md:py-32 bg-grid-[#ffffff08]"
@@ -205,7 +205,7 @@ const AboutSection = forwardRef<HTMLElement, AboutSectionProps>((props, ref) => 
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
         />
       </div>
-    </motion.section>
+    </motion.div>
   )
 })
 

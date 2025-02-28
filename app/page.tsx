@@ -18,13 +18,13 @@ export default function Portfolio() {
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
 
-  const containerRef = useRef(null)
-  const heroRef = useRef(null)
-  const aboutRef = useRef(null)
-  const projectsRef = useRef(null)
-  const skillsRef = useRef(null)
-  const blogRef = useRef(null)
-  const contactRef = useRef(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLDivElement>(null)
+  const aboutRef = useRef<HTMLDivElement>(null)
+  const projectsRef = useRef<HTMLDivElement>(null)
+  const skillsRef = useRef<HTMLDivElement>(null)
+  const blogRef = useRef<HTMLDivElement>(null)
+  const contactRef = useRef<HTMLDivElement>(null)
 
   const cursorRef = useRef(null)
   const cursorX = useMotionValue(-100)
@@ -46,40 +46,32 @@ export default function Portfolio() {
   // Scroll tracking for active section
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY
+      const scrollPosition = window.scrollY + window.innerHeight * 0.3
       const sections = [
-        { id: "home", ref: heroRef },
-        { id: "about", ref: aboutRef },
-        { id: "projects", ref: projectsRef },
-        { id: "skills", ref: skillsRef },
-        { id: "blog", ref: blogRef },
-        { id: "contact", ref: contactRef },
+        { id: "home", ref: heroRef as React.RefObject<HTMLElement> },
+        { id: "about", ref: aboutRef as React.RefObject<HTMLElement> },
+        { id: "projects", ref: projectsRef as React.RefObject<HTMLElement> },
+        { id: "skills", ref: skillsRef as React.RefObject<HTMLElement> },
+        { id: "blog", ref: blogRef as React.RefObject<HTMLElement> },
+        { id: "contact", ref: contactRef as React.RefObject<HTMLElement> },
       ]
 
+      let currentSection = sections[0].id
+
       sections.forEach(({ id, ref }) => {
-        const element = ref.current as HTMLElement | null
+        const element = ref.current
         if (!element) return
 
         const rect = element.getBoundingClientRect()
-        const elementTop = rect.top + scrollPosition
-        const triggerPoint = scrollPosition + window.innerHeight * 0.3
+        const elementTop = rect.top + window.scrollY
 
-        if (triggerPoint >= elementTop) {
-          setActiveSection(id)
-          // 添加动画类
-          element.style.opacity = "1"
-          element.style.transform = "translateY(0)"
+        if (scrollPosition >= elementTop) {
+          currentSection = id
         }
       })
-    }
 
-    // 初始化元素样式
-    const sections = document.querySelectorAll("section")
-    sections.forEach((section) => {
-      section.style.opacity = "0"
-      section.style.transform = "translateY(50px)"
-      section.style.transition = "all 0.8s ease-out"
-    })
+      setActiveSection(currentSection)
+    }
 
     window.addEventListener("scroll", handleScroll)
     handleScroll() // 初始化调用
@@ -90,7 +82,7 @@ export default function Portfolio() {
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId)
     if (section) {
-      const offset = section.offsetTop - 100 // 添加偏移量，考虑导航栏高度
+      const offset = section.offsetTop - 80 // 调整偏移量
       window.scrollTo({
         top: offset,
         behavior: "smooth",
