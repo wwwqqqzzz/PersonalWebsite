@@ -1,113 +1,194 @@
 "use client"
 
 import { forwardRef } from "react"
-import { motion } from "framer-motion"
+import { motion, useMotionTemplate, useTransform } from "framer-motion"
 import Image from "next/image"
-import { FileText, Github, Mail } from "lucide-react"
+import { useMousePosition } from "@/hooks/use-mouse-position"
 
 interface AboutSectionProps {
   className?: string
 }
 
 const AboutSection = forwardRef<HTMLElement, AboutSectionProps>((props, ref) => {
+  const mouse = useMousePosition()
+  const techStack = [
+    { name: "Vue3", level: 0.9 },
+    { name: "TypeScript", level: 0.85 },
+    { name: "低代码", level: 0.8 }
+  ]
+
   return (
     <motion.section
       ref={ref}
       id="about"
-      className="py-20 relative overflow-hidden"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      className="min-h-screen flex items-center justify-center relative overflow-hidden py-20 md:py-32 bg-grid-[#ffffff08]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
     >
-      <div className="container mx-auto px-4">
-        <div className="max-w-6xl mx-auto">
-          <motion.h2
-            className="text-3xl md:text-4xl font-bold text-center mb-12"
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="max-w-4xl mx-auto text-center space-y-10">
+          {/* 三维头像容器 */}
+          <motion.div 
+            className="relative inline-block group perspective-1000"
+            whileHover={{ 
+              rotateY: 5,
+              rotateX: -3,
+              transition: { 
+                type: "spring",
+                stiffness: 300,
+                damping: 15
+              }
+            }}
+          >
+            <div className="relative z-10 p-1 bg-gradient-to-br from-foreground/10 to-background rounded-2xl shadow-2xl transform-style-preserve-3d">
+              <div className="absolute inset-0 bg-primary/5 rounded-xl blur-xl" />
+              
+              <Image
+                src="https://cdn.jsdelivr.net/gh/wwwqqqzzz/Image/img/image-no-bg%20(1).png"
+                alt="技术苦行僧照片"
+                width={160}
+                height={160}
+                className="rounded-xl border-2 border-foreground/20 hover:border-primary/50 transition-colors duration-300 shadow-lg"
+              />
+            </div>
+
+            {/* 全息投影效果 */}
+            <div className="absolute inset-0 bg-[conic-gradient(from_230deg,theme(colors.primary),theme(colors.secondary),theme(colors.primary))] opacity-10 blur-2xl -z-10" />
+          </motion.div>
+
+          {/* 技术标签 */}
+          <motion.div 
+            className="flex flex-wrap justify-center gap-3"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.4 }}
           >
-            关于我
-          </motion.h2>
+            <span className="px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20">代码手艺人</span>
+            <span className="px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20">实战钉子户</span>
+            <span className="px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20">反内卷战士</span>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="relative aspect-square rounded-2xl overflow-hidden group"
-            >
-              <Image
-                src="/about.jpg"
-                alt="关于我的照片"
-                fill
-                className="object-cover transform group-hover:scale-110 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </motion.div>
+          {/* 技能矩阵 */}
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+          >
+            <div className="p-4 rounded-xl bg-background/80 backdrop-blur-sm border border-foreground/10">
+              <h3 className="text-primary mb-2 font-mono">武器库</h3>
+              <ul className="space-y-1 text-sm font-mono">
+                <li>• Vue3全家桶</li>
+                <li>• 前端性能调优</li>
+                <li>• 低代码平台改造</li>
+              </ul>
+            </div>
             
-            <div className="space-y-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-              >
-                <h3 className="text-2xl font-bold mb-2 text-primary">专业技能</h3>
-                <p className="text-foreground/70">
-                  我专注于前端开发，熟练掌握 React、TypeScript、Next.js 等现代前端技术栈。同时具备良好的设计感和用户体验洞察力。
-                </p>
-              </motion.div>
+            <div className="p-4 rounded-xl bg-background/80 backdrop-blur-sm border border-foreground/10">
+              <h3 className="text-primary mb-2 font-mono">哲学</h3>
+              <p className="text-sm font-mono">用20%规范代码承载80%业务需求</p>
+            </div>
+            
+            <div className="p-4 rounded-xl bg-background/80 backdrop-blur-sm border border-foreground/10">
+              <h3 className="text-primary mb-2 font-mono">暗黑技能</h3>
+              <ul className="space-y-1 text-sm font-mono">
+                <li>• CSDN资源海盗</li>
+                <li>• B站教程缝合怪</li>
+                <li>• GitHub星探</li>
+              </ul>
+            </div>
+          </motion.div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
-              >
-                <h3 className="text-2xl font-bold mb-2 text-primary">工作经历</h3>
-                <p className="text-foreground/70">
-                  拥有3年以上的前端开发经验，参与过多个大型项目的开发。善于团队协作，注重代码质量和性能优化。
-                </p>
-              </motion.div>
+          {/* 发展路线 */}
+          <motion.div
+            className="mt-36"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+          >
+            <div className="relative h-[2px] bg-gradient-to-r from-transparent via-foreground/10 to-transparent rounded-full overflow-visible">
+              <div className="absolute -left-4 top-1/2 -translate-y-1/2">
+                <span className="text-foreground/50 text-lg">...</span>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
-                <h3 className="text-2xl font-bold mb-2 text-primary">个人特点</h3>
-                <p className="text-foreground/70">
-                  热爱学习新技术，善于解决问题。注重细节，追求完美的用户体验。具有良好的沟通能力和团队协作精神。
-                </p>
-              </motion.div>
-
-              <motion.div
-                className="flex gap-4 pt-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
-              >
-                <motion.a
-                  href="#"
-                  className="flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+              {/* 代码鬣狗 */}
+              <div className="absolute left-[15%] -translate-y-8 text-sm font-mono">
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.1 }}
                 >
-                  <FileText className="w-5 h-5" />
-                  下载简历
-                </motion.a>
-                <motion.a
-                  href="#"
-                  className="flex items-center gap-2 px-6 py-3 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/30" />
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/50 rounded-full group-hover:bg-primary transition-colors" />
+                  <span className="text-foreground/70 group-hover:text-primary transition-colors">代码鬣狗</span>
+                </motion.div>
+              </div>
+
+              {/* 外包豺狼 */}
+              <div className="absolute left-[38%] translate-y-6 text-sm font-mono">
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.1 }}
                 >
-                  <Mail className="w-5 h-5" />
-                  联系我
-                </motion.a>
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/30" />
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/50 rounded-full group-hover:bg-primary transition-colors" />
+                  <span className="text-foreground/70 group-hover:text-primary transition-colors">外包豺狼</span>
+                </motion.div>
+              </div>
+
+              {/* 技术秃鹫 */}
+              <div className="absolute left-[61%] -translate-y-8 text-sm font-mono">
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/30" />
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/50 rounded-full group-hover:bg-primary transition-colors" />
+                  <span className="text-foreground/70 group-hover:text-primary transition-colors">技术秃鹫</span>
+                </motion.div>
+              </div>
+
+              {/* 赛博巫妖 */}
+              <div className="absolute left-[84%] translate-y-6 text-sm font-mono">
+                <motion.div 
+                  className="relative group"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/30" />
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/50 rounded-full group-hover:bg-primary transition-colors" />
+                  <span className="text-foreground/70 group-hover:text-primary transition-colors">赛博巫妖</span>
+                </motion.div>
+              </div>
+
+              <div className="absolute -right-4 top-1/2 -translate-y-1/2">
+                <span className="text-foreground/50 text-lg">...</span>
+              </div>
+
+              {/* 当前进度标记 */}
+              <motion.div 
+                className="absolute left-[26.5%] top-1/2 -translate-y-1/2"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 1.2, type: "spring" }}
+              >
+                <div className="relative">
+                  <div className="w-4 h-4 rounded-full bg-primary/30 animate-ping absolute inset-0" />
+                  <div className="w-4 h-4 rounded-full bg-primary relative" />
+                </div>
               </motion.div>
             </div>
-          </div>
+          </motion.div>
         </div>
+      </div>
+
+      {/* 背景科技元素 */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent"
+          animate={{ y: ["-100%", "100%"] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+        />
       </div>
     </motion.section>
   )
