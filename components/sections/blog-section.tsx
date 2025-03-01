@@ -1,9 +1,11 @@
 "use client"
 
 import { useState, useRef, useEffect, forwardRef } from "react"
-import { motion } from "framer-motion"
+import { motion, useScroll, useTransform } from "framer-motion"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import { Calendar, Clock, ChevronRight, ArrowRight } from "lucide-react"
+import { Particles } from "@/components/ui/particles"
 
 const blogPosts = [
   {
@@ -14,6 +16,7 @@ const blogPosts = [
     readTime: "5 分钟",
     image: "/placeholder.svg?height=400&width=600",
     tags: ["设计系统", "团队协作", "效率"],
+    category: "设计",
   },
   {
     id: 2,
@@ -23,6 +26,7 @@ const blogPosts = [
     readTime: "7 分钟",
     image: "/placeholder.svg?height=400&width=600",
     tags: ["UX设计", "AI", "VR"],
+    category: "技术",
   },
   {
     id: 3,
@@ -32,6 +36,7 @@ const blogPosts = [
     readTime: "6 分钟",
     image: "/placeholder.svg?height=400&width=600",
     tags: ["用户研究", "设计方法论"],
+    category: "研究",
   },
   {
     id: 4,
@@ -41,6 +46,7 @@ const blogPosts = [
     readTime: "8 分钟",
     image: "/placeholder.svg?height=400&width=600",
     tags: ["移动设计", "用户体验", "设计原则"],
+    category: "设计",
   },
 ]
 
@@ -51,80 +57,161 @@ interface BlogSectionProps {
 const BlogSection = forwardRef<HTMLDivElement, BlogSectionProps>((props, ref) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [containerWidth, setContainerWidth] = useState(0)
+  const [selectedCategory, setSelectedCategory] = useState<string>("全部")
 
-  useEffect(() => {
-    const updateWidth = () => {
-      if (containerRef.current) {
-        setContainerWidth(containerRef.current.offsetWidth)
-      }
-    }
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"],
+  })
 
-    updateWidth()
-    window.addEventListener("resize", updateWidth)
-    return () => window.removeEventListener("resize", updateWidth)
-  }, [])
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100])
+
+  const categories = ["全部", ...Array.from(new Set(blogPosts.map(post => post.category)))]
+  const filteredPosts = selectedCategory === "全部" 
+    ? blogPosts 
+    : blogPosts.filter(post => post.category === selectedCategory)
 
   return (
     <motion.div
       ref={ref}
       id="blog"
-      className="min-h-screen"
+      className="min-h-screen relative overflow-hidden py-20 md:py-32"
     >
-      <motion.div
-        ref={containerRef}
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true, margin: "-100px" }}
-        className="relative overflow-hidden"
-      >
+      {/* 背景效果 */}
+      <div className="absolute inset-0">
+        <Particles
+          className="absolute inset-0 opacity-40"
+          quantity={40}
+          staticity={30}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background/80" />
+      </div>
+
+      <div className="relative container mx-auto px-4">
+        {/* 标题区域 */}
         <motion.div
-          animate={{
-            x: containerWidth > 0 ? [-containerWidth, 0] : 0,
-          }}
-          transition={{
-            x: {
-              repeat: Number.POSITIVE_INFINITY,
-              repeatType: "loop",
-              duration: 20,
-              ease: "linear",
-            },
-          }}
-          className="flex gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
         >
-          {[...blogPosts, ...blogPosts].map((post, index) => (
-            <motion.div
-              key={`${post.id}-${index}`}
+          <h2 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500">
+            博客文章
+          </h2>
+          <p className="mt-4 text-foreground/60">
+            分享设计与开发的心得体会
+          </p>
+        </motion.div>
+
+        {/* 分类标签 */}
+        <div className="flex justify-center gap-2 mb-12">
+          {categories.map((category) => (
+            <motion.button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
               className={cn(
-                "flex-shrink-0 w-72 bg-card rounded-lg overflow-hidden shadow-lg transition-all duration-300",
-                hoveredIndex === index ? "scale-105" : "",
+                "px-4 py-2 rounded-full text-sm transition-all duration-300",
+                selectedCategory === category
+                  ? "bg-primary/20 text-primary shadow-[0_0_20px_rgba(99,102,241,0.3)]"
+                  : "bg-black/20 text-foreground/60 hover:bg-black/30 hover:text-foreground/80"
               )}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {category}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* 博客文章网格 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+          {filteredPosts.map((post, index) => (
+            <motion.article
+              key={post.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
               onHoverStart={() => setHoveredIndex(index)}
               onHoverEnd={() => setHoveredIndex(null)}
+              className="group relative bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden"
             >
-              <div className="relative h-40">
-                <Image src={post.image || "/placeholder.svg"} alt={post.title} layout="fill" objectFit="cover" />
-              </div>
-              <div className="p-4">
-                <h3 className="text-lg font-bold mb-2">{post.title}</h3>
-                <p className="text-sm text-foreground/70 mb-4">{post.excerpt}</p>
-                <div className="flex justify-between items-center text-xs text-foreground/50">
-                  <span>{post.date}</span>
-                  <span>{post.readTime}</span>
-                </div>
-              </div>
-              <div className="px-4 pb-4 flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <span key={tag} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                    {tag}
+              {/* 背景光效 */}
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              {/* 文章内容 */}
+              <div className="relative p-6">
+                <div className="flex items-center gap-4 mb-4 text-sm text-foreground/60">
+                  <span className="px-3 py-1 rounded-full bg-primary/20 text-primary">
+                    {post.category}
                   </span>
-                ))}
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    {post.date}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4" />
+                    {post.readTime}
+                  </div>
+                </div>
+
+                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors duration-300">
+                  {post.title}
+                </h3>
+                <p className="text-foreground/60 mb-4 line-clamp-2">
+                  {post.excerpt}
+                </p>
+
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {post.tags.map(tag => (
+                    <span
+                      key={tag}
+                      className="px-2 py-1 text-xs rounded-full bg-white/5 text-foreground/60"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+
+                <motion.div
+                  className="inline-flex items-center gap-2 text-primary"
+                  whileHover={{ x: 5 }}
+                >
+                  阅读更多
+                  <ArrowRight className="w-4 h-4" />
+                </motion.div>
               </div>
-            </motion.div>
+
+              {/* 悬停效果 */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20 opacity-0 group-hover:opacity-100"
+                style={{
+                  clipPath: hoveredIndex === index ? "circle(150% at 50% 50%)" : "circle(0% at 50% 50%)",
+                }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+              />
+            </motion.article>
           ))}
+        </div>
+
+        {/* 查看更多按钮 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="flex justify-center mt-12"
+        >
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-6 py-3 rounded-xl bg-primary/20 text-primary hover:bg-primary/30 transition-colors duration-300 flex items-center gap-2"
+          >
+            查看更多文章
+            <ChevronRight className="w-4 h-4" />
+          </motion.button>
         </motion.div>
-      </motion.div>
+      </div>
     </motion.div>
   )
 })
