@@ -590,23 +590,23 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
           {/* 终端头部 */}
           <div className="bg-black/30 px-6 py-3 flex items-center justify-between border-b border-white/[0.08]">
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
                 <Terminal className="h-4 w-4 text-primary/70" />
                 <span className="text-sm font-mono bg-gradient-to-r from-primary/80 to-purple-400/80 bg-clip-text text-transparent">skills.terminal</span>
-              </div>
+        </div>
               <div className="h-4 w-[1px] bg-white/[0.08]" />
               <div className="flex items-center space-x-2 text-xs text-white/30">
                 <Command className="h-3 w-3" />
                 <span>按 ESC 退出全屏</span>
-              </div>
-            </div>
+        </div>
+      </div>
 
             <div className="flex items-center space-x-3">
               {/* 视图切换按钮组 */}
               <div className="flex items-center space-x-1 bg-black/30 rounded-lg p-1 border border-white/[0.08]">
-                <button
+              <button
                   onClick={() => setViewMode("terminal")}
-                  className={cn(
+                className={cn(
                     "p-1.5 rounded-md transition-all duration-200 relative group",
                     viewMode === "terminal" 
                       ? "bg-primary/20 text-primary shadow-[0_0_10px_rgba(99,102,241,0.1)]" 
@@ -622,7 +622,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                </button>
+              </button>
                 <button
                   onClick={() => setViewMode("tree")}
                   className={cn(
@@ -644,7 +644,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                 </button>
                 <button
                   onClick={() => setViewMode("radar")}
-                  className={cn(
+                className={cn(
                     "p-1.5 rounded-md transition-all duration-200 relative group",
                     viewMode === "radar" 
                       ? "bg-primary/20 text-primary shadow-[0_0_10px_rgba(99,102,241,0.1)]" 
@@ -681,7 +681,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
           {/* 主内容区 */}
           <div className="h-[600px] md:h-[700px] flex flex-col bg-black/10 backdrop-blur-3xl">
             {renderContent()}
-          </div>
+        </div>
         </motion.div>
       </div>
     </motion.div>
