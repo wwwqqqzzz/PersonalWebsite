@@ -144,7 +144,7 @@ export default function Portfolio() {
       </div>
 
       {/* 其他部分 */}
-      <div className="space-y-24 px-6 pb-24 mt-16">
+      <div className="space-y-24 px-6 pb-24 mt-24">
         {/* Projects部分 */}
         <div id="projects" ref={projectsRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
           <div className="relative border-b border-border/10">

@@ -91,7 +91,7 @@ export function TabletScroll({ titleComponent, avatarComponent, children }: Tabl
 
   return (
     <div
-      className="h-[850px] w-full flex flex-col items-center justify-start relative tablet-container"
+      className="h-[950px] w-full flex flex-col items-center justify-start relative tablet-container"
       ref={containerRef}
       id="about"
     >
@@ -170,7 +170,7 @@ function TabletCard({
         perspective,
         transformOrigin: "center bottom",
       }}
-      className="max-w-7xl mx-auto h-[750px] w-full relative rounded-[2rem] overflow-hidden transform-gpu will-change-transform"
+      className="max-w-7xl mx-auto h-[850px] w-full relative rounded-[2rem] overflow-hidden transform-gpu will-change-transform"
       initial={{ y: 0 }}
     >
       {/* 红色边框框架 */}
