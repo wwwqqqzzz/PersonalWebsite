@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef, forwardRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useEffect, useRef, forwardRef, useMemo } from "react"
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion"
 import { Terminal, Circle, Maximize2, Minimize2, Command, Box } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useHotkeys } from 'react-hotkeys-hook'
@@ -32,8 +32,8 @@ interface SkillCategory {
 // 效果常量
 const GRADIENT_COLORS = ["#6366f1", "#3b82f6", "#10b981"]
 const PARTICLE_CONFIG = {
-  quantity: 40,
-  staticity: 50,
+  quantity: 20,
+  staticity: 70,
   colorVar: "--primary"
 }
 
@@ -90,10 +90,15 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [isFocused, setIsFocused] = useState(false)
   const [typedCommand, setTypedCommand] = useState("")
+  const [isTerminalActive, setIsTerminalActive] = useState(false)
   
   const terminalRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-
+  const animationPlayedRef = useRef(false)
+  const [hasAnimated, setHasAnimated] = useState(false)
+  const shouldReduceMotion = useReducedMotion()
+  const sectionRef = useRef<HTMLDivElement>(null)
+  
   const commands = {
     help: "显示帮助信息",
     list: "列出所有技能类别",
@@ -238,6 +243,9 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      // 只有当终端处于激活状态时才处理键盘事件
+      if (!isTerminalActive) return
+      
       if (e.key === "Escape") {
         setIsExpanded(false)
       }
@@ -247,10 +255,19 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
     }
     window.addEventListener("keydown", handleKeyPress)
     return () => window.removeEventListener("keydown", handleKeyPress)
-  }, [isExpanded])
+  }, [isExpanded, isTerminalActive])
 
   useEffect(() => {
     const showLoadingAnimation = async () => {
+      // 如果已经播放过动画，则不再重复播放
+      if (animationPlayedRef.current) {
+        setCommandHistory([
+          { type: "success", content: "⭐ 系统已就绪" },
+          { type: "info", content: "输入 'help' 查看可用命令" }
+        ]);
+        return;
+      }
+      
       const stages = [
         { text: "正在连接到远程服务器...", time: 1000 },
         { text: "正在验证访问权限...", time: 800 },
@@ -281,53 +298,83 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
         { type: "success", content: "⭐ 系统初始化完成！" },
         { type: "info", content: "输入 'help' 查看可用命令" }
       ])
+      
+      // 标记动画已播放
+      animationPlayedRef.current = true;
     }
 
     showLoadingAnimation()
   }, [])
 
-  // 添加技能树视图组件
+  // 替换视图切换动画逻辑
+  const viewTransition = useMemo(() => ({
+    initial: shouldReduceMotion ? {} : { opacity: 0 },
+    animate: shouldReduceMotion ? {} : { opacity: 1 },
+    exit: shouldReduceMotion ? {} : { opacity: 0 },
+    transition: { duration: 0.3 }
+  }), [shouldReduceMotion])
+  
+  // 添加一次性入场控制
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasAnimated) {
+          setHasAnimated(true)
+        }
+      },
+      { threshold: 0.1 }
+    )
+    
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+    
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current)
+      }
+    }
+  }, [hasAnimated])
+
+  // 修改技能树视图组件
   const SkillTreeView = () => (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="h-full p-6 bg-black/20"
+      {...viewTransition}
+      className="h-full p-6 bg-transparent"
     >
       <div className="grid grid-cols-3 gap-6 h-full">
         {skills.map((category, i) => (
           <motion.div
             key={category.category}
-            initial={{ opacity: 0, y: 20 }}
+            initial={hasAnimated || shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ 
+              duration: 0.5,
+              ease: "easeOut",
+              delay: shouldReduceMotion ? 0 : Math.min(0.1 * i, 0.3)
+            }}
             className="relative group"
           >
-            <motion.div
-              className="absolute inset-0 bg-primary/5 rounded-xl blur-xl"
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.1, 0.3, 0.1],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+            <div 
+              className="absolute inset-0 bg-gradient-to-b from-primary/10 to-primary/5 dark:from-primary/5 dark:to-primary/0 rounded-xl"
             />
-            <div className="relative h-full border border-primary/20 rounded-xl p-4 bg-black/40 backdrop-blur-sm overflow-hidden group-hover:border-primary/40 transition-colors">
+            
+            <div className="relative h-full border border-primary/10 dark:border-primary/20 rounded-xl p-4 bg-white/80 dark:bg-black/40 backdrop-blur-sm overflow-hidden group-hover:border-primary/30 transition-all duration-300">
               <div className="flex items-center space-x-3 mb-4">
                 <span className="text-2xl">{category.icon}</span>
-                <span className="text-lg font-semibold text-primary">{category.category}</span>
+                <span className="text-lg font-semibold text-primary/90">{category.category}</span>
               </div>
               <p className="text-sm text-foreground/70 mb-6">{category.description}</p>
               <div className="space-y-4">
                 {category.items.map((skill, j) => (
                   <motion.div
                     key={skill.name}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={hasAnimated || shouldReduceMotion ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 + j * 0.05 }}
+                    transition={{ 
+                      duration: 0.3,
+                      delay: shouldReduceMotion ? 0 : Math.min(0.1 + j * 0.03, 0.3)
+                    }}
                     className="group/skill"
                   >
                     <div className="flex items-center justify-between mb-1">
@@ -337,12 +384,16 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                       </div>
                       <span className="text-xs text-primary">{skill.level}%</span>
                     </div>
-                    <div className="h-1 w-full bg-primary/10 rounded-full overflow-hidden">
+                    <div className="h-1 w-full bg-primary/5 dark:bg-primary/10 rounded-full overflow-hidden">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${skill.level}%` }}
-                        transition={{ duration: 1, delay: 0.2 }}
-                        className="h-full bg-gradient-to-r from-primary/50 to-primary rounded-full group-hover/skill:from-primary group-hover/skill:to-primary/50"
+                        transition={{ 
+                          duration: 0.6, 
+                          delay: 0.15,
+                          ease: "easeOut" 
+                        }}
+                        className="h-full bg-gradient-to-r from-primary/70 to-primary rounded-full group-hover/skill:from-primary group-hover/skill:to-primary/70"
                       />
                     </div>
                   </motion.div>
@@ -355,7 +406,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
     </motion.div>
   )
 
-  // 添加雷达图视图组件
+  // 修改雷达图视图组件
   const SkillRadarView = () => {
     const radarData = skills.map(category => ({
       category: category.category,
@@ -365,20 +416,22 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
     
     return (
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        {...viewTransition}
         className="h-full grid grid-cols-3 gap-6 p-6"
       >
         {radarData.map((data, i) => (
           <motion.div 
             key={data.category}
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={hasAnimated || shouldReduceMotion ? { opacity: 1, scale: 0.8 } : { opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: i * 0.1 }}
-            className="relative bg-black/40 rounded-xl p-6 border border-primary/20"
+            transition={{ 
+              duration: 0.5,
+              ease: "easeOut",
+              delay: shouldReduceMotion ? 0 : Math.min(0.1 * i, 0.3)
+            }}
+            className="relative bg-white/80 dark:bg-black/40 rounded-xl p-6 border border-primary/10 dark:border-primary/20"
           >
-            <div className="absolute -top-3 left-4 px-3 py-1 bg-primary/20 rounded-full text-xs text-primary">
+            <div className="absolute -top-3 left-4 px-3 py-1 bg-primary/10 dark:bg-primary/20 rounded-full text-xs text-primary/90">
               {data.category}
             </div>
             <div className="h-full flex flex-col">
@@ -394,7 +447,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="10"
-                    className="text-primary/10"
+                    className="text-primary/5 dark:text-primary/10"
                   />
                   <motion.circle
                     cx="50"
@@ -407,7 +460,10 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                     className="text-primary"
                     initial={{ strokeDasharray: "0 283" }}
                     animate={{ strokeDasharray: `${data.score * 2.83} 283` }}
-                    transition={{ duration: 1, delay: i * 0.2 }}
+                    transition={{ 
+                      duration: 0.8,
+                      ease: "easeOut"
+                    }}
                   />
                 </svg>
               </div>
@@ -415,14 +471,17 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                 {data.items.map((item, j) => (
                   <motion.div
                     key={item.name}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={hasAnimated || shouldReduceMotion ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 + j * 0.05 }}
+                    transition={{ 
+                      duration: 0.3,
+                      delay: shouldReduceMotion ? 0 : Math.min(0.1 + j * 0.03, 0.3)
+                    }}
                     className="flex items-center justify-between text-sm"
                   >
                     <div className="flex items-center space-x-2">
                       <span>{item.icon}</span>
-                      <span>{item.name}</span>
+                      <span className="text-foreground/90">{item.name}</span>
                     </div>
                     <span className="text-primary">{item.level}%</span>
                   </motion.div>
@@ -435,16 +494,16 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
     )
   }
 
-  // 更新渲染逻辑
+  // 修改主体渲染函数
   const renderContent = () => {
-    switch (viewMode) {
-      case "radar":
-        return <SkillRadarView />
-      case "tree":
-        return <SkillTreeView />
-      default:
-        return (
-          <>
+    return (
+      <AnimatePresence mode="wait">
+        {viewMode === "terminal" && (
+          <motion.div 
+            key="terminal"
+            {...viewTransition}
+            className="flex flex-col h-full"
+          >
             <div
               ref={terminalRef}
               className="flex-1 p-6 font-mono text-sm overflow-y-auto scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent space-y-2"
@@ -473,7 +532,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
             </div>
 
             {/* 命令输入区 */}
-            <div className="border-t border-primary/20 bg-black/40 p-4">
+            <div className="border-t border-black/10 dark:border-primary/20 bg-white/60 dark:bg-black/40 p-4">
               <div className="relative">
                 {/* 命令提示 */}
                 <AnimatePresence>
@@ -482,7 +541,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
-                      className="absolute bottom-full left-0 right-0 mb-2 bg-black/80 backdrop-blur-lg rounded-lg p-2 shadow-xl border border-primary/20 z-50"
+                      className="absolute bottom-full left-0 right-0 mb-2 bg-white/90 dark:bg-black/80 backdrop-blur-lg rounded-lg p-2 shadow-xl border border-black/10 dark:border-primary/20 z-50"
                     >
                       {commandSuggestions.map((cmd, i) => (
                         <motion.div
@@ -512,60 +571,75 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                 </AnimatePresence>
 
                 <form onSubmit={handleCommand} className="flex items-center space-x-3">
-                  <div className="text-primary">{">"}</div>
+                  <div className="text-primary/80">{">"}</div>
                   <input
                     ref={inputRef}
                     type="text"
-                    className="flex-1 bg-transparent border-none outline-none text-sm font-mono text-primary placeholder-primary/30"
+                    className="flex-1 bg-transparent border-none outline-none text-sm font-mono text-foreground dark:text-primary placeholder-foreground/30 dark:placeholder-primary/30"
                     placeholder="输入命令..."
                     spellCheck={false}
                     autoComplete="off"
-                    onFocus={() => setIsFocused(true)}
+                    onFocus={() => {
+                      if (isTerminalActive) {
+                        setIsFocused(true)
+                      } else {
+                        inputRef.current?.blur()
+                      }
+                    }}
                     onBlur={() => {
                       setTimeout(() => setIsFocused(false), 200)
                     }}
                     onChange={(e) => {
-                      setTypedCommand(e.target.value);
-                      updateSuggestions(e.target.value);
+                      if (isTerminalActive) {
+                        setTypedCommand(e.target.value)
+                        updateSuggestions(e.target.value)
+                      }
                     }}
                   />
                 </form>
               </div>
             </div>
-          </>
-        )
-    }
+          </motion.div>
+        )}
+        {viewMode === "tree" && <SkillTreeView key="tree" />}
+        {viewMode === "radar" && <SkillRadarView key="radar" />}
+      </AnimatePresence>
+    )
   }
 
   return (
     <motion.div
-      ref={ref}
+      ref={(node) => {
+        // 合并refs
+        if (typeof ref === 'function') ref(node)
+        else if (ref) ref.current = node
+        sectionRef.current = node
+      }}
       id="skills"
       className="min-h-screen flex items-center justify-center relative overflow-hidden py-20 md:py-32"
     >
       {/* 增强背景效果 */}
       <div className="absolute inset-0 bg-gradient-to-br from-background via-background/80 to-background/30">
-        <Particles {...PARTICLE_CONFIG} className="opacity-30" />
+        <Particles {...PARTICLE_CONFIG} className="opacity-20" />
         <motion.div 
-          className="absolute inset-0 bg-[url('/circuit.svg')] opacity-10"
+          className="absolute inset-0 bg-[url('/circuit.svg')] opacity-5"
           animate={{ 
             backgroundPosition: ['0% 0%', '100% 100%'],
-            opacity: [0.1, 0.15, 0.1]
+            opacity: [0.05, 0.08, 0.05]
           }}
           transition={{
-            duration: 20,
+            duration: 30,
             repeat: Infinity
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-primary/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-primary/5 to-transparent" />
       </div>
 
       <div className="relative w-full max-w-5xl mx-auto">
         {/* 标题 */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          initial={hasAnimated || shouldReduceMotion ? {} : { opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
@@ -578,24 +652,25 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
         </motion.div>
 
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      viewport={{ once: true }}
+      initial={hasAnimated || shouldReduceMotion ? {} : { opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
       className={cn(
-        "w-full bg-black/20 backdrop-blur-3xl rounded-2xl overflow-hidden border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] transition-all duration-500",
+        "w-full bg-black/20 dark:bg-black/20 bg-white/80 backdrop-blur-3xl rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.12)] transition-all duration-500",
         isExpanded ? "fixed inset-4 z-50 max-w-none" : "relative"
       )}
+      onMouseEnter={() => setIsTerminalActive(true)}
+      onMouseLeave={() => setIsTerminalActive(false)}
     >
           {/* 终端头部 */}
-          <div className="bg-black/30 px-6 py-3 flex items-center justify-between border-b border-white/[0.08]">
+          <div className="bg-black/30 dark:bg-black/30 bg-white/60 px-6 py-3 flex items-center justify-between border-b border-black/10 dark:border-white/[0.08]">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <Terminal className="h-4 w-4 text-primary/70" />
                 <span className="text-sm font-mono bg-gradient-to-r from-primary/80 to-purple-400/80 bg-clip-text text-transparent">skills.terminal</span>
               </div>
-              <div className="h-4 w-[1px] bg-white/[0.08]" />
-              <div className="flex items-center space-x-2 text-xs text-white/30">
+              <div className="h-4 w-[1px] bg-black/20 dark:bg-white/[0.08]" />
+              <div className="flex items-center space-x-2 text-xs text-black/50 dark:text-white/30">
                 <Command className="h-3 w-3" />
                 <span>按 ESC 退出全屏</span>
               </div>
@@ -604,9 +679,9 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
             <div className="flex items-center space-x-3">
               {/* 视图切换按钮组 */}
               <div className="flex items-center space-x-1 bg-black/30 rounded-lg p-1 border border-white/[0.08]">
-                <button
+              <button
                   onClick={() => setViewMode("terminal")}
-                  className={cn(
+                className={cn(
                     "p-1.5 rounded-md transition-all duration-200 relative group",
                     viewMode === "terminal" 
                       ? "bg-primary/20 text-primary shadow-[0_0_10px_rgba(99,102,241,0.1)]" 
@@ -622,7 +697,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
-                </button>
+              </button>
                 <button
                   onClick={() => setViewMode("tree")}
                   className={cn(
@@ -644,7 +719,7 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
                 </button>
                 <button
                   onClick={() => setViewMode("radar")}
-                  className={cn(
+                className={cn(
                     "p-1.5 rounded-md transition-all duration-200 relative group",
                     viewMode === "radar" 
                       ? "bg-primary/20 text-primary shadow-[0_0_10px_rgba(99,102,241,0.1)]" 
@@ -679,9 +754,9 @@ const SkillsSection = forwardRef<HTMLDivElement, SkillsSectionProps>((props, ref
           </div>
 
           {/* 主内容区 */}
-          <div className="h-[600px] md:h-[700px] flex flex-col bg-black/10 backdrop-blur-3xl">
+          <div className="h-[600px] md:h-[700px] flex flex-col bg-white/60 dark:bg-black/10 backdrop-blur-3xl">
             {renderContent()}
-          </div>
+        </div>
         </motion.div>
       </div>
     </motion.div>

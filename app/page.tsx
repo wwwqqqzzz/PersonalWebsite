@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring } from "fram
 import { FileText, Github, Mail } from "lucide-react"
 import { useTheme } from "next-themes"
 import Navigation from "@/components/navigation/index"
-import HeroSection from "@/components/sections/hero-section"
+import HeroSectionParallax from '@/components/sections/hero-section-parallax'
 import AboutSection from "@/components/sections/about-section"
 import ProjectsSection from "@/components/sections/projects-carousel"
 import SkillsSection from "@/components/sections/terminal-skills"
@@ -126,7 +126,7 @@ export default function Portfolio() {
       <Navigation activeSection={activeSection} scrollToSection={scrollToSection} />
 
       {/* Main Content */}
-      <HeroSection ref={heroRef} />
+      <HeroSectionParallax ref={heroRef} />
       <AboutSection ref={aboutRef} />
       <ProjectsSection ref={projectsRef} />
       <SkillsSection ref={skillsRef} />
