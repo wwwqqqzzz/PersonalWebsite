@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
 import Navigation from "@/components/navigation/index"
-import ProjectsSection from "@/components/sections/projects-carousel"
+import ProjectsTimeline from "@/components/sections/projects-timeline"
 import SkillsSection from "@/components/sections/terminal-skills"
 import BlogSection from "@/components/sections/blog-section"
 import ContactSection from "@/components/sections/chat-contact"
@@ -150,7 +150,7 @@ export default function Portfolio() {
           <div className="relative border-b border-border/10">
             {/* 顶部装饰栏 */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/40 via-primary/30 to-purple-500/40"></div>
-            <ProjectsSection />
+            <ProjectsTimeline />
           </div>
         </div>
         

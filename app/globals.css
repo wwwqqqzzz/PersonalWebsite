@@ -74,3 +74,468 @@
   }
 }
 
+/* 时间轴组件样式 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes timelineProgress {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.timeline-item-active {
+  transition: all 0.5s ease-in-out;
+}
+
+/* 新增时间轴动画效果 */
+@keyframes fadeUpOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* 时间轴年份标记 */
+.timeline-year {
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.timeline-year-active {
+  font-weight: bold;
+  color: hsl(var(--primary));
+  transform: scale(1.1);
+}
+
+.timeline-year-passed {
+  animation: fadeUpOut 0.5s forwards;
+}
+
+.timeline-year-upcoming {
+  opacity: 0.6;
+  transform: scale(0.9) translateY(20px);
+}
+
+/* 固定的时间轴模块 */
+.timeline-wrapper-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* 时间轴连接线 */
+.timeline-connector {
+  position: absolute;
+  width: 2px;
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    hsl(var(--border)) 10%,
+    hsl(var(--border)) 90%,
+    transparent 100%
+  );
+  overflow: hidden;
+}
+
+.timeline-connector-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, 
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary) / 0.6) 50%,
+    transparent 100%
+  );
+  border-radius: 9999px;
+}
+
+/* 右侧内容动画 */
+.timeline-content-enter {
+  animation: fadeInContent 0.6s forwards;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 优化滚动行为 */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* 自定义滚动条 */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: hsl(var(--background) / 0.5);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* 时间轴卡片悬停效果 */
+.timeline-card-hover {
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.timeline-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* 图片网格悬停效果 */
+.image-grid .image-hover {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.image-grid:hover .image-hover {
+  transform: scale(0.95);
+  opacity: 0.75;
+}
+
+.image-grid:hover .image-hover:hover {
+  transform: scale(1.05);
+  opacity: 1;
+  z-index: 1;
+}
+
+/* 垂直时间轴组件样式 - 更新 */
+.timeline-container {
+  position: relative;
+  width: 100%;
+}
+
+/* 图片网格效果 - 增强版 */
+.image-grid {
+  width: 100%;
+  display: grid;
+  gap: 16px;
+}
+
+.image-grid .timeline-image {
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.image-grid .timeline-image:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  z-index: 2;
+}
+
+.image-grid .image-hover {
+  transition: all 0.7s cubic-bezier(0.17, 0.84, 0.44, 1);
+}
+
+.image-grid .timeline-image:hover .image-hover {
+  transform: scale(1.08) rotate(1deg);
+  filter: saturate(1.2);
+}
+
+/* 垂直时间轴线 - 优化 */
+.timeline-line {
+  position: absolute;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    hsl(var(--primary)/0.2) 5%,
+    hsl(var(--primary)) 50%,
+    hsl(var(--primary)/0.2) 95%,
+    transparent 100%
+  );
+}
+
+/* 时间点圆圈 - 优化 */
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid hsl(var(--primary));
+  background-color: hsl(var(--card));
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.timeline-dot.active {
+  background-color: hsl(var(--primary));
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.4);
+  transform: scale(1.25);
+}
+
+/* 时间轴进度指示器 - 优化 */
+.timeline-progress {
+  position: absolute;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary)/0.8) 30%,
+    hsl(var(--primary)/0.4) 70%,
+    transparent 100%
+  );
+  transition: height 0.1s ease;
+}
+
+/* 时间轴内容卡片 - 增强 */
+.timeline-card {
+  position: relative;
+  padding: 1.75rem;
+  border-radius: 12px;
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.timeline-card:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 15px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* 年份样式 - 优化 */
+.timeline-year {
+  font-weight: 500;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.timeline-year.active {
+  font-weight: 600;
+  color: hsl(var(--primary));
+  letter-spacing: 0.02em;
+}
+
+/* 移动端响应式调整 - 优化 */
+@media (max-width: 768px) {
+  .timeline-line,
+  .timeline-dot {
+    left: 20px !important;
+  }
+  
+  .timeline-content {
+    margin-left: 40px;
+  }
+  
+  .image-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .timeline-card {
+    padding: 1.25rem;
+  }
+}
+
+/* 时间点连接线动画 */
+@keyframes pulseConnection {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+.timeline-connection {
+  animation: pulseConnection 3s infinite;
+}
+
+/* 优化图片加载效果 */
+@keyframes fadeInImage {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timeline-image {
+  animation: fadeInImage 0.7s ease forwards;
+  animation-delay: calc(var(--image-index, 0) * 0.1s);
+}
+
+/* 图片悬停效果 */
+.timeline-image {
+  overflow: hidden;
+  border-radius: 6px;
+}
+
+.timeline-image img {
+  transition: transform 0.5s ease;
+}
+
+.timeline-image:hover img {
+  transform: scale(1.1);
+}
+
+/* 玻璃拟态效果增强 */
+.bg-glass {
+  background: linear-gradient(
+    152deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 12px 40px -12px rgba(0, 0, 0, 0.1),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* 暗黑模式下的玻璃效果调整 */
+.dark .bg-glass {
+  background: linear-gradient(
+    152deg,
+    rgba(23, 23, 23, 0.7) 0%,
+    rgba(23, 23, 23, 0.3) 100%
+  );
+  backdrop-filter: blur(16px);
+  box-shadow:
+    0 12px 40px -12px rgba(0, 0, 0, 0.2),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.05);
+}
+
+/* 光晕阴影效果 */
+.shadow-glow {
+  box-shadow: 
+    0 0 10px rgba(var(--primary-rgb), 0.5),
+    0 0 20px rgba(var(--primary-rgb), 0.3),
+    0 0 30px rgba(var(--primary-rgb), 0.1);
+}
+
+/* 慢速旋转动画 */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 6s linear infinite;
+}
+
+/* 径向渐变背景 */
+.bg-radial-gradient {
+  background: radial-gradient(
+    circle at center,
+    var(--gradient-from, rgba(var(--primary-rgb), 0.5)) 0%,
+    var(--gradient-via, rgba(var(--primary-rgb), 0.2)) 40%,
+    var(--gradient-to, transparent) 100%
+  );
+}
+
+/* 上下浮动动画 */
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.2); }
+}
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 脉冲光晕效果 */
+@keyframes pulse-glow {
+  0% { opacity: 0.4; transform: scale(0.95); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+.animate-pulse-glow {
+  animation: pulse-glow 2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+/* 追逐光效动画 */
+@keyframes chase-light {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+.animate-chase-light {
+  animation: chase-light 2.5s linear infinite;
+}
+
+/* 波纹效果动画 */
+@keyframes ripple {
+  0% { opacity: 1; transform: scale(0); }
+  100% { opacity: 0; transform: scale(1); }
+}
+.animate-ripple {
+  animation: ripple 1.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
