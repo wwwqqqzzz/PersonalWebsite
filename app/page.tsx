@@ -6,7 +6,7 @@ import { FileText, Github, Mail } from "lucide-react"
 import { useTheme } from "next-themes"
 import Navigation from "@/components/navigation/index"
 import HeroSectionParallax from '@/components/sections/hero-section-parallax'
-import AboutSection from "@/components/sections/about-section"
+import AboutSectionParallax from '@/components/sections/about-section-parallax'
 import ProjectsSection from "@/components/sections/projects-carousel"
 import SkillsSection from "@/components/sections/terminal-skills"
 import BlogSection from "@/components/sections/blog-section"
@@ -127,7 +127,7 @@ export default function Portfolio() {
 
       {/* Main Content */}
       <HeroSectionParallax ref={heroRef} />
-      <AboutSection ref={aboutRef} />
+      <AboutSectionParallax ref={aboutRef} />
       <ProjectsSection ref={projectsRef} />
       <SkillsSection ref={skillsRef} />
       <BlogSection ref={blogRef} />
