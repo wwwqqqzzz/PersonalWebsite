@@ -125,7 +125,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                   priority
                 />
               </div>
-              
+
               {/* 头像下方的装饰元素和提示 */}
               <div className="absolute w-20 h-0.5 bg-gradient-to-r from-transparent 
                   via-indigo-400/40 
@@ -427,8 +427,8 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                         );
                       })}
                     </svg>
-                  </div>
-                  
+            </div>
+            
                   <div className="mt-auto bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-200 dark:border-blue-800">
                     <p className="text-xs font-mono text-center text-gray-700 dark:text-white/80">
                       得<span className="text-blue-700 dark:text-blue-400">武林秘籍</span>，渡重重险阻，遇明师点拨，终成一代宗师

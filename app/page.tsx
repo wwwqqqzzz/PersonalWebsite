@@ -2,15 +2,15 @@
 
 import React, { useEffect, useRef, useState } from "react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
-import { FileText, Github, Mail } from "lucide-react"
-import { useTheme } from "next-themes"
 import Navigation from "@/components/navigation/index"
-import HeroSectionParallax from '@/components/sections/hero-section-parallax'
-import AboutSectionParallax from '@/components/sections/about-section-parallax'
 import ProjectsSection from "@/components/sections/projects-carousel"
 import SkillsSection from "@/components/sections/terminal-skills"
 import BlogSection from "@/components/sections/blog-section"
 import ContactSection from "@/components/sections/chat-contact"
+import Footer from "@/components/sections/footer"
+import { useTheme } from "next-themes"
+import { HeroScrollDemo } from "@/components/blocks/hero-scroll-demo"
+import { ScrollEffectDemo } from "@/components/blocks/scroll-effect-demo"
 
 export default function Portfolio() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -82,10 +82,9 @@ export default function Portfolio() {
   const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId)
     if (section) {
-      const offset = section.offsetTop - 80 // 调整偏移量
+      // 移除平滑滚动效果
       window.scrollTo({
-        top: offset,
-        behavior: "smooth",
+        top: section.offsetTop - 80,
       })
     }
     setMenuOpen(false)
@@ -102,13 +101,20 @@ export default function Portfolio() {
     return () => window.removeEventListener("mousemove", moveCursor)
   }, [cursorX, cursorY])
 
+  // 移除全局平滑滚动效果
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.documentElement.style.scrollBehavior = 'auto';
+    }
+  }, []);
+
   if (!mounted) return null
 
   return (
     <div ref={containerRef} className="relative bg-background text-foreground overflow-hidden">
       {/* 滚动进度条 */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-primary/30 origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-red-500/30 origin-left z-50"
         style={{ scaleX: scrollYProgress }}
       />
 
@@ -125,42 +131,89 @@ export default function Portfolio() {
       {/* Navigation */}
       <Navigation activeSection={activeSection} scrollToSection={scrollToSection} />
 
-      {/* Main Content */}
-      <HeroSectionParallax ref={heroRef} />
-      <AboutSectionParallax ref={aboutRef} />
-      <ProjectsSection ref={projectsRef} />
-      <SkillsSection ref={skillsRef} />
-      <BlogSection ref={blogRef} />
-      <ContactSection ref={contactRef} />
+      <div className="relative">
+        {/* Hero部分 - 简化首页 */}
+        <section id="home" ref={heroRef}>
+          <ScrollEffectDemo />
+        </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-6 border-t border-border text-center">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-foreground/50">© {new Date().getFullYear()} 王起哲设计工作室. 保留所有权利.</p>
-            <div className="flex space-x-4">
-              <motion.a
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                href="#"
-                className="text-foreground/50 hover:text-primary transition-colors"
-              >
-                <Mail className="h-5 w-5" />
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                href="#"
-                className="text-foreground/50 hover:text-primary transition-colors"
-              >
-                <Github className="h-5 w-5" />
-              </motion.a>
-            </div>
+        {/* About部分 - 使用梯形到长方形的变形效果 */}
+        <section id="about" ref={aboutRef} style={{ marginTop: "-25vh" }}>
+          <HeroScrollDemo />
+        </section>
+      </div>
+
+      {/* 其他部分 */}
+      <div className="space-y-24 px-6 pb-24 mt-20">
+        {/* Projects部分 */}
+        <div id="projects" ref={projectsRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
+          <div className="relative border-b border-border/10">
+            {/* 顶部装饰栏 */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/40 via-primary/30 to-purple-500/40"></div>
+            <ProjectsSection />
           </div>
         </div>
-      </footer>
+        
+        {/* Skills部分 */}
+        <div id="skills" ref={skillsRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
+          <div className="relative border-b border-border/10">
+            {/* 顶部装饰栏 */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500/40 via-primary/30 to-blue-500/40"></div>
+            <SkillsSection />
+          </div>
+        </div>
+        
+        {/* Blog部分 */}
+        <div id="blog" ref={blogRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
+          <div className="relative border-b border-border/10">
+            {/* 顶部装饰栏 */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500/40 via-primary/30 to-pink-500/40"></div>
+            <BlogSection />
+          </div>
+        </div>
+        
+        {/* Contact部分 */}
+        <div id="contact" ref={contactRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
+          <div className="relative border-b border-border/10">
+            {/* 顶部装饰栏 */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500/40 via-primary/30 to-red-500/40"></div>
+            <ContactSection />
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-24 px-6">
+        <Footer />
+      </div>
     </div>
   )
+}
+
+// 全局样式
+const gradientText = `
+  @keyframes textShine {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+  .gradient-text {
+    background: linear-gradient(to right, #667eea, #764ba2, #6B8DD6, #8E37D7);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShine 4s linear infinite;
+  }
+`
+
+// 添加全局样式
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style')
+  style.textContent = gradientText
+  document.head.appendChild(style)
 }
 
 
