@@ -131,43 +131,54 @@ export default function Portfolio() {
       {/* Navigation */}
       <Navigation activeSection={activeSection} scrollToSection={scrollToSection} />
 
+      {/* 首页和About部分 - 实现视差效果 */}
       <div className="relative">
-        {/* Hero部分 - 简化首页 */}
-        <section id="home" ref={heroRef}>
+        {/* 首页 - 固定位置作为背景 */}
+        <div id="home" ref={heroRef} className="fixed top-0 left-0 w-full h-screen z-0">
           <ScrollEffectDemo />
-        </section>
+        </div>
 
-        {/* About部分 - 使用梯形到长方形的变形效果 */}
-        <section id="about" ref={aboutRef} style={{ marginTop: "-20vh" }}>
-          <HeroScrollDemo />
-        </section>
-      </div>
-
-      {/* 其他部分 */}
-      <div className="space-y-24 px-6 pb-24 mt-24">
-        {/* Projects部分 */}
-        <div id="projects" ref={projectsRef} className="max-w-7xl mx-auto px-6">
-          <ProjectsTimeline />
+        {/* 内容容器 - 首页之上的内容 */}
+        <div className="relative z-10">
+          {/* 空白区域确保首页内容完全显示 */}
+          <div className="h-screen"></div>
+          
+          {/* About部分 - 从底部滑入覆盖首页 */}
+          <div 
+            id="about" 
+            ref={aboutRef}
+            className="bg-background rounded-t-[30px] shadow-xl overflow-hidden"
+          >
+            <HeroScrollDemo />
+          </div>
+          
+          {/* 其他正常布局的部分 */}
+          <div className="bg-background">
+            {/* Projects部分 */}
+            <div id="projects" ref={projectsRef} className="max-w-7xl mx-auto py-24 px-6">
+              <ProjectsTimeline />
+            </div>
+            
+            {/* Skills部分 */}
+            <div id="skills" ref={skillsRef} className="max-w-7xl mx-auto py-16 px-6">
+              <SkillsShowcase />
+            </div>
+            
+            {/* Blog部分 */}
+            <div id="blog" ref={blogRef} className="max-w-7xl mx-auto py-16 px-6">
+              <BlogSection />
+            </div>
+            
+            {/* Contact部分 */}
+            <div id="contact" ref={contactRef} className="max-w-7xl mx-auto py-16 px-6">
+              <ContactSection />
+            </div>
+            
+            <div className="mt-16 px-6">
+              <Footer />
+            </div>
+          </div>
         </div>
-        
-        {/* Skills部分 */}
-        <div id="skills" ref={skillsRef} className="max-w-7xl mx-auto px-6">
-          <SkillsShowcase />
-        </div>
-        
-        {/* Blog部分 */}
-        <div id="blog" ref={blogRef} className="max-w-7xl mx-auto px-6">
-          <BlogSection />
-        </div>
-        
-        {/* Contact部分 */}
-        <div id="contact" ref={contactRef} className="max-w-7xl mx-auto px-6">
-          <ContactSection />
-        </div>
-      </div>
-      
-      <div className="mt-24 px-6">
-        <Footer />
       </div>
     </div>
   )
