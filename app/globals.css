@@ -72,6 +72,15 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
   }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* 时间轴组件样式 */
@@ -774,5 +783,70 @@ html {
 
 .carousel-track.css-fallback.right {
   animation: scrollRight 70s linear infinite;
+}
+
+/* 技能光谱相关样式 */
+.skill-node {
+  transform-origin: center center;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.7;
+  }
+}
+
+.spectrum-ring {
+  animation: pulse-ring 3s ease-in-out infinite;
+}
+
+/* 光谱效果 - 暗色模式微调 */
+.dark .skill-node {
+  filter: brightness(1.1) contrast(1.1);
+}
+
+.dark .spectrum-ring {
+  opacity: 0.4 !important;
+}
+
+/* 平滑连接线效果 */
+@keyframes dash {
+  from {
+    stroke-dashoffset: 200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.connection-line {
+  stroke-dasharray: 5, 5;
+  animation: dash 2s linear forwards;
+}
+
+/* 背景图案网格效果 */
+.bg-pattern-grid {
+  background-image: url('/background/layer-grid.svg');
+  background-repeat: repeat;
+  background-size: 40px 40px;
+}
+
+/* 背景图案圆点效果 */
+.bg-pattern-dots {
+  background-image: url('/background/layer-dots.svg');
+  background-repeat: repeat;
+  background-size: 20px 20px;
 }
 

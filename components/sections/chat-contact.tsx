@@ -1,11 +1,8 @@
 "use client"
 
-import { useState, useRef, useEffect, forwardRef } from "react"
-import { motion, AnimatePresence, useMotionTemplate, useMotionValue } from "framer-motion"
-import { Send, Bot, Paperclip, Smile, Link, Image as ImageIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { Particles } from "@/components/ui/particles"
+import { forwardRef, useRef, useState, useEffect } from "react"
+import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from "framer-motion"
+import { Send, Bot, Mail, Phone, MapPin } from "lucide-react"
 import { chatWithQianwen } from "@/lib/qianwen"
 
 interface ChatContactProps {
@@ -24,6 +21,86 @@ interface Message {
     preview?: string
   }
 }
+
+// 自定义容器组件，动画方向与ContainerScroll相反
+const ReversedContainer = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+  });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
+  const scaleDimensions = () => {
+    return isMobile ? [0.9, 0.7] : [1, 1.05];
+  };
+
+  // 注意这里我们反转了动画的方向
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 20]);
+  const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
+  const translate = useTransform(scrollYProgress, [0, 1], [-100, 0]);
+
+  return (
+    <div
+      className="h-[60rem] md:h-[80rem] flex items-center justify-center relative p-0 md:p-4"
+      ref={containerRef}
+    >
+      <div
+        className="py-4 md:py-8 w-full h-full relative"
+        style={{
+          perspective: "1000px",
+        }}
+      >
+        <Card rotate={rotate} translate={translate} scale={scale}>
+          {children}
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+// 卡片组件
+const Card = ({
+  rotate,
+  scale,
+  translate,
+  children,
+}: {
+  rotate: MotionValue<number>;
+  scale: MotionValue<number>;
+  translate: MotionValue<number>;
+  children: React.ReactNode;
+}) => {
+  return (
+    <motion.div
+      style={{
+        rotateX: rotate,
+        scale,
+        boxShadow:
+          "0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042, 0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003",
+      }}
+      className="w-full h-full mx-auto border-4 border-[#6C6C6C] p-2 md:p-4 bg-[#222222] rounded-[30px] shadow-2xl"
+    >
+      <div className="h-full w-full overflow-hidden rounded-2xl bg-gray-100 dark:bg-zinc-900 md:rounded-2xl">
+        {children}
+      </div>
+    </motion.div>
+  );
+};
 
 const suggestions = [
   "你好!我想了解更多关于你的作品",
@@ -45,9 +122,8 @@ const ChatContact = forwardRef<HTMLDivElement, ChatContactProps>((props, ref) =>
   const [inputValue, setInputValue] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const mouseX = useMotionValue(0)
-  const mouseY = useMotionValue(0)
   const inputRef = useRef<HTMLInputElement>(null)
+  const [activeSection, setActiveSection] = useState("ai")
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -56,14 +132,6 @@ const ChatContact = forwardRef<HTMLDivElement, ChatContactProps>((props, ref) =>
   useEffect(() => {
     scrollToBottom()
   }, [messages])
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-    mouseX.set(x)
-    mouseY.set(y)
-  }
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -125,231 +193,204 @@ const ChatContact = forwardRef<HTMLDivElement, ChatContactProps>((props, ref) =>
   }
 
   return (
-    <motion.div
-      ref={ref}
-      id="contact"
-      className="min-h-screen relative flex flex-col items-center justify-center py-20"
-      onClick={handleWrapperClick}
-    >
-      {/* 背景粒子 */}
-      <Particles
-        className="absolute inset-0 opacity-40"
-        quantity={40}
-        staticity={50}
-      />
-      
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        onMouseMove={handleMouseMove}
-        className="relative w-full max-w-2xl"
-      >
-        {/* 光晕效果 */}
-        <motion.div
-          className="absolute -inset-px rounded-xl bg-gradient-to-r from-primary/50 via-purple-500/50 to-pink-500/50 opacity-50 blur-xl"
-          style={{
-            background: useMotionTemplate`radial-gradient(circle at ${mouseX}px ${mouseY}px, var(--primary-color) 0%, transparent 60%)`
-          }}
-        />
-
-        <div className="relative bg-card/30 backdrop-blur-md rounded-xl overflow-hidden border border-border shadow-xl">
-          {/* Chat header */}
-          <div className="bg-muted/30 px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="relative">
-                <motion.div
-                  className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <Bot className="h-5 w-5 text-primary" />
-                </motion.div>
-                <motion.span
-                  className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-500"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [1, 0.8, 1],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                  }}
-                />
-              </div>
-              <div>
-                <h3 className="font-medium">王起哲的助手</h3>
-                <p className="text-xs text-foreground/50">通常在几分钟内回复</p>
-              </div>
+    <div ref={ref} className={`${props.className || ''} h-full w-full`}>
+      <ReversedContainer>
+        <div className="flex h-full bg-white dark:bg-zinc-900">
+          {/* 左侧边栏 */}
+          <div className="w-[60px] min-w-[60px] border-r border-gray-200 dark:border-gray-800 flex flex-col items-center py-5">
+            <div 
+              className={`w-10 h-10 mb-5 rounded-lg flex items-center justify-center cursor-pointer
+                ${activeSection === "ai" ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 text-gray-500 dark:hover:bg-gray-800"}`}
+              onClick={() => setActiveSection("ai")}
+            >
+              <Bot className="w-5 h-5" />
+            </div>
+            <div 
+              className={`w-10 h-10 mb-5 rounded-lg flex items-center justify-center cursor-pointer
+                ${activeSection === "mail" ? "bg-purple-100 text-purple-600" : "hover:bg-gray-100 text-gray-500 dark:hover:bg-gray-800"}`}
+              onClick={() => setActiveSection("mail")}
+            >
+              <Mail className="w-5 h-5" />
+            </div>
+            <div 
+              className={`w-10 h-10 mb-5 rounded-lg flex items-center justify-center cursor-pointer
+                ${activeSection === "phone" ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 text-gray-500 dark:hover:bg-gray-800"}`}
+              onClick={() => setActiveSection("phone")}
+            >
+              <Phone className="w-5 h-5" />
+            </div>
+            <div 
+              className={`w-10 h-10 mb-5 rounded-lg flex items-center justify-center cursor-pointer
+                ${activeSection === "location" ? "bg-green-100 text-green-600" : "hover:bg-gray-100 text-gray-500 dark:hover:bg-gray-800"}`}
+              onClick={() => setActiveSection("location")}
+            >
+              <MapPin className="w-5 h-5" />
             </div>
           </div>
-
-          {/* Chat messages */}
-          <div className="h-[400px] overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
-            <AnimatePresence>
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className={cn("flex", message.type === "user" ? "justify-end" : "justify-start")}
-                >
-                  <div
-                    className={cn(
-                      "max-w-[80%] rounded-2xl px-4 py-3 flex flex-col",
-                      message.type === "user"
-                        ? "bg-primary text-primary-foreground rounded-tr-none"
-                        : "bg-muted rounded-tl-none"
-                    )}
-                  >
-                    {message.contentType === "text" && (
-                      <motion.span
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.3 }}
-                        className="text-sm"
+          
+          {/* 主内容区 */}
+          <div className="flex-1 flex flex-col">
+            {/* 顶部标题 */}
+            <div className="h-14 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-4">
+              <div className="flex items-center space-x-2">
+                <Bot className="w-5 h-5 text-blue-600" />
+                <h3 className="font-medium text-lg">智能助手</h3>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              </div>
+            </div>
+            
+            {/* 内容展示区域 */}
+            <div className="flex-1 overflow-y-auto p-4">
+              {activeSection === "ai" && (
+                <>
+                  {/* 消息区域 */}
+                  <div className="mb-auto">
+                    {messages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`mb-4 flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                       >
-                        {message.content}
-                      </motion.span>
+                        <div
+                          className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                            message.type === "user"
+                              ? "bg-blue-500 text-white"
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+                          }`}
+                        >
+                          <div className="text-sm">
+                            {message.content}
+                          </div>
+                          <div className="text-xs mt-1 opacity-70 text-right">
+                            {message.time}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {isTyping && (
+                      <div className="flex mb-4 justify-start">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-3">
+                          <div className="flex space-x-2">
+                            <motion.div
+                              className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full"
+                              animate={{ y: [0, -3, 0] }}
+                              transition={{
+                                duration: 0.6,
+                                repeat: Infinity,
+                                repeatType: "loop",
+                                ease: "easeInOut",
+                                delay: 0
+                              }}
+                            />
+                            <motion.div
+                              className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full"
+                              animate={{ y: [0, -3, 0] }}
+                              transition={{
+                                duration: 0.6,
+                                repeat: Infinity,
+                                repeatType: "loop",
+                                ease: "easeInOut",
+                                delay: 0.15
+                              }}
+                            />
+                            <motion.div
+                              className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full"
+                              animate={{ y: [0, -3, 0] }}
+                              transition={{
+                                duration: 0.6,
+                                repeat: Infinity,
+                                repeatType: "loop",
+                                ease: "easeInOut",
+                                delay: 0.3
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
                     )}
-
-                    {message.contentType === "link" && message.metadata && (
-                      <motion.a
-                        href={message.metadata.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-                        whileHover={{ scale: 1.02 }}
-                      >
-                        <Link className="h-4 w-4" />
-                        <span className="text-sm underline">{message.metadata.title}</span>
-                      </motion.a>
-                    )}
-
-                    {message.contentType === "image" && message.metadata && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="relative mt-2 rounded-lg overflow-hidden"
-                      >
-                        <img
-                          src={message.metadata.url}
-                          alt={message.metadata.title}
-                          className="w-full h-auto rounded-lg"
-                        />
-                      </motion.div>
-                    )}
-
-                    <span className="text-xs mt-1 opacity-70 self-end">{message.time}</span>
+                    <div ref={messagesEndRef} />
                   </div>
-                </motion.div>
-              ))}
-
-              {isTyping && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex justify-start"
-                >
-                  <div className="bg-muted rounded-2xl rounded-tl-none px-4 py-3">
-                    <div className="flex space-x-1">
-                      <motion.span
-                        className="w-2 h-2 rounded-full bg-foreground/50"
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ duration: 0.6, repeat: Infinity }}
-                      />
-                      <motion.span
-                        className="w-2 h-2 rounded-full bg-foreground/50"
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ duration: 0.6, delay: 0.15, repeat: Infinity }}
-                      />
-                      <motion.span
-                        className="w-2 h-2 rounded-full bg-foreground/50"
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ duration: 0.6, delay: 0.3, repeat: Infinity }}
-                      />
+                </>
+              )}
+              
+              {activeSection === "mail" && (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Mail className="w-12 h-12 text-purple-500 mb-4" />
+                  <h3 className="text-xl font-medium mb-2">电子邮件</h3>
+                  <p className="text-gray-600 dark:text-gray-400">contact@example.com</p>
+                </div>
+              )}
+              
+              {activeSection === "phone" && (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Phone className="w-12 h-12 text-blue-500 mb-4" />
+                  <h3 className="text-xl font-medium mb-2">电话联系</h3>
+                  <p className="text-gray-600 dark:text-gray-400">+86 123 4567 8910</p>
+                </div>
+              )}
+              
+              {activeSection === "location" && (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <MapPin className="w-12 h-12 text-green-500 mb-4" />
+                  <h3 className="text-xl font-medium mb-2">地址</h3>
+                  <p className="text-gray-600 dark:text-gray-400">中国，上海</p>
+                </div>
+              )}
+            </div>
+            
+            {/* 底部操作区域 */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-800">
+              {activeSection === "ai" && (
+                <>
+                  {/* 快速回复 */}
+                  <div className="mb-4">
+                    <div className="flex flex-wrap gap-2">
+                      {suggestions.map((suggestion, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          className="text-xs px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
                     </div>
                   </div>
-                </motion.div>
+                  
+                  {/* 输入区域 */}
+                  <form 
+                    onSubmit={handleSendMessage}
+                    onClick={handleWrapperClick}
+                  >
+                    <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-full focus-within:ring-1 focus-within:ring-blue-500 px-4 py-2">
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        placeholder="发送消息..."
+                        className="flex-1 bg-transparent outline-none text-sm"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onClick={handleInputClick}
+                      />
+                      <button
+                        type="submit"
+                        className={`w-8 h-8 flex items-center justify-center rounded-full ${!inputValue.trim() || isTyping ? 'text-gray-400' : 'text-blue-500 hover:bg-blue-50'}`}
+                        disabled={!inputValue.trim() || isTyping}
+                      >
+                        <Send className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </form>
+                </>
               )}
-              <div ref={messagesEndRef} />
-            </AnimatePresence>
-          </div>
-
-          {/* Quick suggestions */}
-          <div className="px-4 py-2 border-t border-border flex items-center gap-2 overflow-x-auto scrollbar-none">
-            {suggestions.map((suggestion, index) => (
-              <motion.button
-                key={index}
-                onClick={() => handleSuggestionClick(suggestion)}
-                className="shrink-0 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm hover:bg-primary/20 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {suggestion}
-              </motion.button>
-            ))}
-          </div>
-
-          {/* Chat input */}
-          <div className="border-t border-border p-4">
-            <form onSubmit={handleSendMessage} className="flex items-center space-x-2" onClick={handleInputClick}>
-              <motion.button
-                type="button"
-                className="p-2 rounded-full hover:bg-muted transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={handleInputClick}
-              >
-                <Paperclip className="h-5 w-5 text-foreground/70" />
-              </motion.button>
-              <input
-                ref={inputRef}
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onClick={handleInputClick}
-                placeholder="输入你的消息..."
-                className="flex-1 bg-muted/30 border border-border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <motion.button
-                type="button"
-                className="p-2 rounded-full hover:bg-muted transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={handleInputClick}
-              >
-                <Smile className="h-5 w-5 text-foreground/70" />
-              </motion.button>
-              <Button
-                type="submit"
-                size="icon"
-                className="rounded-full"
-                disabled={!inputValue.trim() || isTyping}
-                onClick={handleInputClick}
-              >
-                <Send className="h-5 w-5" />
-              </Button>
-            </form>
-
-            <div className="mt-4 text-center" onClick={handleInputClick}>
-              <p className="text-xs text-foreground/50">
-                或者直接发送邮件至{" "}
-                <a
-                  href="mailto:2158588419@qq.com"
-                  className="text-primary hover:underline"
-                  onClick={handleInputClick}
-                >
-                  2158588419@qq.com
-                </a>
-              </p>
             </div>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </ReversedContainer>
+    </div>
   )
 })
 

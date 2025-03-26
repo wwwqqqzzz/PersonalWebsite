@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
 import Navigation from "@/components/navigation/index"
 import ProjectsTimeline from "@/components/sections/projects-timeline"
-import SkillsSection from "@/components/sections/terminal-skills"
+import SkillsShowcase from "@/components/sections/skills-showcase"
 import BlogSection from "@/components/sections/blog-section"
 import ContactSection from "@/components/sections/chat-contact"
 import Footer from "@/components/sections/footer"
@@ -146,39 +146,23 @@ export default function Portfolio() {
       {/* 其他部分 */}
       <div className="space-y-24 px-6 pb-24 mt-24">
         {/* Projects部分 */}
-        <div id="projects" ref={projectsRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
-          <div className="relative border-b border-border/10">
-            {/* 顶部装饰栏 */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500/40 via-primary/30 to-purple-500/40"></div>
-            <ProjectsTimeline />
-          </div>
+        <div id="projects" ref={projectsRef} className="max-w-7xl mx-auto px-6">
+          <ProjectsTimeline />
         </div>
         
         {/* Skills部分 */}
-        <div id="skills" ref={skillsRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
-          <div className="relative border-b border-border/10">
-            {/* 顶部装饰栏 */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500/40 via-primary/30 to-blue-500/40"></div>
-            <SkillsSection />
-          </div>
+        <div id="skills" ref={skillsRef} className="max-w-7xl mx-auto px-6">
+          <SkillsShowcase />
         </div>
         
         {/* Blog部分 */}
-        <div id="blog" ref={blogRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
-          <div className="relative border-b border-border/10">
-            {/* 顶部装饰栏 */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500/40 via-primary/30 to-pink-500/40"></div>
-            <BlogSection />
-          </div>
+        <div id="blog" ref={blogRef} className="max-w-7xl mx-auto px-6">
+          <BlogSection />
         </div>
         
         {/* Contact部分 */}
-        <div id="contact" ref={contactRef} className="max-w-7xl mx-auto rounded-3xl overflow-hidden border border-border/30 backdrop-blur-sm bg-background/20 shadow-xl">
-          <div className="relative border-b border-border/10">
-            {/* 顶部装饰栏 */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500/40 via-primary/30 to-red-500/40"></div>
-            <ContactSection />
-          </div>
+        <div id="contact" ref={contactRef} className="max-w-7xl mx-auto px-6">
+          <ContactSection />
         </div>
       </div>
       
