@@ -26,7 +26,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
             transition={{ duration: 0.6, ease: "circOut" }}
           >
             <span className="relative">
-              技术苦行僧
+              王起哲
               <div className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-foreground/50 to-transparent" />
             </span>
           </motion.h2>
@@ -40,8 +40,10 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
         </div>
         
         <div className="flex flex-col items-center space-y-12 w-full max-w-4xl mx-auto">
-          {/* 技术苦行僧身份卡片 - 视差动画效果 */}
-          <div className="w-[200px] h-[250px] rounded-xl overflow-hidden shadow-xl relative group transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:-rotate-1">
+          {/* 身份卡片 - 视差动画效果 */}
+          <div 
+            className="w-[200px] h-[250px] rounded-xl overflow-hidden shadow-xl relative group transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:-rotate-1 z-20"
+          >
             {/* 卡片背景 */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#1b2535] dark:bg-none z-0"></div>
             
@@ -77,7 +79,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                   blur-md"></div>
               <Image
                 src="/avatar/技术苦行僧.png"
-                alt="技术苦行僧照片"
+                alt="王起哲照片"
                 width={120}
                 height={120}
                 className="rounded-full object-cover relative z-10 
@@ -104,7 +106,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                 text-indigo-700 
                 dark:text-gray-300 
                 z-[3]">
-              <span className="text-xs">『 悬停查看隐藏技能 』</span>
+              <span className="text-xs">『 悬停查看更多 』</span>
             </div>
             
             {/* 标题和标签区域 - 默认隐藏，悬停时显示 */}
@@ -113,10 +115,10 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
               <div className="text-center mb-2">
                 <h3 className="text-xl font-bold 
                     text-indigo-900
-                    dark:text-white">技术苦行僧</h3>
+                    dark:text-white">王起哲</h3>
                 <p className="text-xs 
                     text-indigo-800/80
-                    dark:text-gray-300">代码之路修行者</p>
+                    dark:text-gray-300">网页全栈工程师</p>
               </div>
               
               {/* 标签区域 */}
@@ -130,7 +132,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                       bg-purple-300 
                       dark:bg-purple-400 
                       mr-2"></div>
-                  <span className="text-sm text-white">代码手艺人</span>
+                  <span className="text-sm text-white">前端开发专家</span>
                 </div>
                 
                 {/* 蓝色标签 */}
@@ -142,7 +144,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                       bg-blue-300 
                       dark:bg-blue-400 
                       mr-2"></div>
-                  <span className="text-sm text-white">实战钉子户</span>
+                  <span className="text-sm text-white">后端架构师</span>
                 </div>
                 
                 {/* 绿色标签 */}
@@ -154,7 +156,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                       bg-green-300 
                       dark:bg-green-400 
                       mr-2"></div>
-                  <span className="text-sm text-white">反内卷战士</span>
+                  <span className="text-sm text-white">UI/UX设计师</span>
                 </div>
               </div>
             </div>
@@ -182,7 +184,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
               {/* 修行武器卡片 - 始终显示内容 */}
               <div className="bg-white/95 dark:bg-background/95 rounded-xl border border-purple-300 shadow-md overflow-hidden flex-1">
                 <div className="p-4 flex flex-col h-full">
-                  <h3 className="text-purple-700 dark:text-purple-400 font-mono text-lg border-b border-purple-200 dark:border-purple-800 pb-2 mb-3">修行武器</h3>
+                  <h3 className="text-purple-700 dark:text-purple-400 font-mono text-lg border-b border-purple-200 dark:border-purple-800 pb-2 mb-3">专业技能</h3>
                   
                   {/* 静态经脉图 */}
                   <div className="flex justify-center mb-4">
@@ -225,7 +227,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                   <div className="space-y-3 mt-2">
                     <div className="w-full">
                       <div className="flex justify-between text-sm font-mono items-center">
-                        <span className="text-gray-700 dark:text-white/90">心法修炼</span>
+                        <span className="text-gray-700 dark:text-white/90">React生态</span>
                         <span className="text-purple-700 dark:text-purple-400">精通</span>
                       </div>
                       <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1">
@@ -235,7 +237,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                     
                     <div className="w-full">
                       <div className="flex justify-between text-sm font-mono items-center">
-                        <span className="text-gray-700 dark:text-white/90">剑法锻造</span>
+                        <span className="text-gray-700 dark:text-white/90">后端开发</span>
                         <span className="text-purple-700 dark:text-purple-400">纯熟</span>
                       </div>
                       <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1">
@@ -245,7 +247,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                     
                     <div className="w-full">
                       <div className="flex justify-between text-sm font-mono items-center">
-                        <span className="text-gray-700 dark:text-white/90">器械掌握</span>
+                        <span className="text-gray-700 dark:text-white/90">工具链</span>
                         <span className="text-purple-700 dark:text-purple-400">熟练</span>
                       </div>
                       <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1">
@@ -256,71 +258,10 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                 </div>
               </div>
 
-              {/* 修行哲学卡片 - 始终显示内容 */}
-              <div className="bg-white/95 dark:bg-background/95 rounded-xl border border-indigo-300 shadow-md overflow-hidden flex-1">
-                <div className="p-4 flex flex-col h-full">
-                  <h3 className="text-indigo-700 dark:text-indigo-400 font-mono text-lg border-b border-indigo-200 dark:border-indigo-800 pb-2 mb-3">修行哲学</h3>
-                  
-                  {/* 静态太极图 */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="relative">
-                      <svg width="60" height="60" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="48" stroke="#4f46e5" strokeWidth="1.5" fill="none" />
-                        
-                        {/* 简化的太极图案 */}
-                        <path 
-                          d="M 50,2 A 48,48 0 0 1 50,98 A 24,24 0 0 0 50,50 A 24,24 0 0 1 50,2 Z" 
-                          fill="#312e81" fillOpacity="0.2"
-                        />
-                        <path 
-                          d="M 50,2 A 48,48 0 0 0 50,98 A 24,24 0 0 1 50,50 A 24,24 0 0 0 50,2 Z" 
-                          fill="#e0e7ff" fillOpacity="0.5"
-                        />
-                        
-                        {/* 阴阳鱼眼 */}
-                        <circle cx="50" cy="26" r="4" fill="#4f46e5" />
-                        <circle cx="50" cy="74" r="4" fill="#e0e7ff" />
-                      </svg>
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="text-indigo-700 dark:text-indigo-400 font-mono font-semibold text-sm mb-1">苦修原则</div>
-                      <p className="text-sm text-gray-700 dark:text-white/80">
-                        <span className="text-indigo-700 dark:text-indigo-400 font-semibold">极致</span> 追求千锤百炼
-                      </p>
-                      <p className="text-xs text-gray-600 dark:text-white/60 mt-1 italic">
-                        宁可十年磨一剑，不为一日走捷径
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* 三原则 - 简化设计 */}
-                  <div className="grid grid-cols-3 gap-3 mt-3">
-                    {[
-                      { label: "精益求精", symbol: "精" },
-                      { label: "简约至上", symbol: "简" },
-                      { label: "持之以恒", symbol: "恒" }
-                    ].map((item, index) => (
-                      <div 
-                        key={index}
-                        className="flex flex-col items-center"
-                      >
-                        <div className="w-10 h-10 mb-1 flex items-center justify-center bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded">
-                          <span className="text-lg font-bold text-indigo-700 dark:text-indigo-400">
-                            {item.symbol}
-                          </span>
-                        </div>
-                        <span className="text-xs font-mono text-gray-700 dark:text-white/90">{item.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* 隐世绝技卡片 - 始终显示内容 */}
+              {/* 核心技能卡片 - 始终显示内容 */}
               <div className="bg-white/95 dark:bg-background/95 rounded-xl border border-blue-300 shadow-md overflow-hidden flex-1">
                 <div className="p-4 flex flex-col h-full">
-                  <h3 className="text-blue-700 dark:text-blue-400 font-mono text-lg border-b border-blue-200 dark:border-blue-800 pb-2 mb-3">隐世绝技</h3>
+                  <h3 className="text-blue-700 dark:text-blue-400 font-mono text-lg border-b border-blue-200 dark:border-blue-800 pb-2 mb-3">核心技能</h3>
                   
                   {/* 简化八卦图 */}
                   <div className="flex justify-center mb-3">
@@ -332,7 +273,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                       <circle cx="100" cy="100" r="25" fill="#3b82f6" fillOpacity="0.1" stroke="#3b82f6" strokeWidth="1" />
                       
                       {/* 中央图标 */}
-                      <text x="100" y="108" textAnchor="middle" fontSize="20" fill="#3b82f6">🧘</text>
+                      <text x="100" y="108" textAnchor="middle" fontSize="20" fill="#3b82f6">🧠</text>
                       
                       {/* 简化的八卦线 */}
                       <line x1="10" y1="100" x2="190" y2="100" stroke="#3b82f6" strokeWidth="0.8" />
@@ -342,14 +283,14 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                       
                       {/* 八个技能点 - 静态设计 */}
                       {[
-                        { icon: "⚡", label: "调试顿悟", angle: 0 },
-                        { icon: "🔮", label: "源码参透", angle: 45 },
-                        { icon: "📜", label: "经典传承", angle: 90 },
-                        { icon: "🧠", label: "思维修炼", angle: 135 },
-                        { icon: "🛡️", label: "错误免疫", angle: 180 },
-                        { icon: "⚙️", label: "工具炼成", angle: 225 },
-                        { icon: "🌪️", label: "重构秘法", angle: 270 },
-                        { icon: "🔍", label: "追根溯源", angle: 315 }
+                        { icon: "⚡", label: "调试能力", angle: 0 },
+                        { icon: "🔮", label: "源码分析", angle: 45 },
+                        { icon: "📜", label: "组件开发", angle: 90 },
+                        { icon: "🧠", label: "架构设计", angle: 135 },
+                        { icon: "🛡️", label: "测试优化", angle: 180 },
+                        { icon: "⚙️", label: "工具开发", angle: 225 },
+                        { icon: "🌪️", label: "重构技术", angle: 270 },
+                        { icon: "🔍", label: "问题诊断", angle: 315 }
                       ].map((item, index) => {
                         const angleRad = item.angle * Math.PI / 180;
                         const distance = 65;
@@ -391,7 +332,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                   
                   <div className="mt-auto bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-200 dark:border-blue-800">
                     <p className="text-xs font-mono text-center text-gray-700 dark:text-white/80">
-                      得<span className="text-blue-700 dark:text-blue-400">武林秘籍</span>，渡重重险阻，遇明师点拨，终成一代宗师
+                      <span className="text-blue-700 dark:text-blue-400">全栈工程师</span>，前后端技术全面发展
                     </p>
                   </div>
                 </div>
@@ -411,7 +352,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                 <span className="text-foreground/50 text-lg">...</span>
               </div>
 
-              {/* 代码鬣狗 */}
+              {/* 职业发展阶段 */}
               <div className="absolute left-[15%] -translate-y-8 text-sm font-mono">
                 <motion.div 
                   className="relative group"
@@ -419,11 +360,10 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                 >
                   <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/30" />
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/50 rounded-full group-hover:bg-primary transition-colors" />
-                  <span className="text-foreground/70 group-hover:text-primary transition-colors">代码鬣狗</span>
+                  <span className="text-foreground/70 group-hover:text-primary transition-colors">初级开发</span>
                 </motion.div>
               </div>
 
-              {/* 外包豺狼 */}
               <div className="absolute left-[38%] translate-y-6 text-sm font-mono">
                 <motion.div 
                   className="relative group"
@@ -431,11 +371,10 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                 >
                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/30" />
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/50 rounded-full group-hover:bg-primary transition-colors" />
-                  <span className="text-foreground/70 group-hover:text-primary transition-colors">外包豺狼</span>
+                  <span className="text-foreground/70 group-hover:text-primary transition-colors">高级工程师</span>
                 </motion.div>
               </div>
 
-              {/* 技术秃鹫 */}
               <div className="absolute left-[61%] -translate-y-8 text-sm font-mono">
                 <motion.div 
                   className="relative group"
@@ -443,11 +382,10 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                 >
                   <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/30" />
                   <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/50 rounded-full group-hover:bg-primary transition-colors" />
-                  <span className="text-foreground/70 group-hover:text-primary transition-colors">技术秃鹫</span>
+                  <span className="text-foreground/70 group-hover:text-primary transition-colors">技术专家</span>
                 </motion.div>
               </div>
 
-              {/* 赛博巫妖 */}
               <div className="absolute left-[84%] translate-y-6 text-sm font-mono">
                 <motion.div 
                   className="relative group"
@@ -455,7 +393,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
                 >
                   <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[1px] h-4 bg-primary/30" />
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary/50 rounded-full group-hover:bg-primary transition-colors" />
-                  <span className="text-foreground/70 group-hover:text-primary transition-colors">赛博巫妖</span>
+                  <span className="text-foreground/70 group-hover:text-primary transition-colors">技术总监</span>
                 </motion.div>
               </div>
 
@@ -465,7 +403,7 @@ const AboutSectionParallax = forwardRef<HTMLDivElement, AboutSectionParallaxProp
 
               {/* 当前进度标记 */}
               <motion.div 
-                className="absolute left-[26.5%] top-1/2 -translate-y-1/2"
+                className="absolute left-[61%] top-1/2 -translate-y-1/2"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 1.2, type: "spring" }}

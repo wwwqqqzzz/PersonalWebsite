@@ -15,11 +15,11 @@ export function ScrollEffectDemo() {
         >
           <h1 className="text-5xl md:text-7xl lg:text-9xl font-bold mb-4">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 via-primary to-red-400">
-              技术苦行僧
+              王起哲
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-foreground/80">
-            的作品集
+            全栈工程师
           </p>
         </motion.div>
       </div>

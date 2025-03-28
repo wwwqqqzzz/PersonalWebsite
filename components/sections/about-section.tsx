@@ -213,12 +213,12 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
               transition={{ duration: 0.6, ease: "circOut" }}
             >
               <span className="relative">
-                技术苦行僧
+                王起哲
                 <div className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-foreground/50 to-transparent" />
               </span>
             </motion.h2>
 
-            {/* 技术苦行僧身份卡片 - 视差动画效果 */}
+            {/* 个人身份卡片 - 视差动画效果 */}
             <div className={`${isMobile ? 'w-[180px] h-[220px]' : 'w-[200px] h-[250px]'} rounded-xl overflow-hidden shadow-xl relative group transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:-rotate-1`}>
               {/* 卡片背景 */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#1b2535] dark:bg-none z-0"></div>
@@ -255,7 +255,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                     blur-md"></div>
                 <Image
                   src="/avatar/技术苦行僧.png"
-                  alt="技术苦行僧照片"
+                  alt="王起哲照片"
                   width={isMobile ? 100 : 120}
                   height={isMobile ? 100 : 120}
                   className="rounded-full object-cover relative z-10 
@@ -282,7 +282,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                   text-indigo-700 
                   dark:text-gray-300 
                   z-[3]">
-                <span className="text-xs">『 悬停查看隐藏技能 』</span>
+                <span className="text-xs">『 悬停查看更多 』</span>
               </div>
               
               {/* 标题和标签区域 - 默认隐藏，悬停时显示 */}
@@ -291,10 +291,10 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                 <div className="text-center mb-2">
                   <h3 className="text-xl font-bold 
                       text-indigo-900
-                      dark:text-white">技术苦行僧</h3>
+                      dark:text-white">王起哲</h3>
                   <p className="text-xs 
                       text-indigo-800/80
-                      dark:text-gray-300">代码之路修行者</p>
+                      dark:text-gray-300">网页全栈工程师</p>
                 </div>
                 
                 {/* 标签区域 */}
@@ -308,7 +308,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                         bg-purple-300 
                         dark:bg-purple-400 
                         mr-2"></div>
-                    <span className="text-sm text-white">代码手艺人</span>
+                    <span className="text-sm text-white">前端开发专家</span>
                   </div>
                   
                   {/* 蓝色标签 */}
@@ -320,7 +320,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                         bg-blue-300 
                         dark:bg-blue-400 
                         mr-2"></div>
-                    <span className="text-sm text-white">实战钉子户</span>
+                    <span className="text-sm text-white">后端架构师</span>
                   </div>
                   
                   {/* 绿色标签 */}
@@ -332,7 +332,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                         bg-green-300 
                         dark:bg-green-400 
                         mr-2"></div>
-                    <span className="text-sm text-white">反内卷战士</span>
+                    <span className="text-sm text-white">UI/UX设计师</span>
                   </div>
                 </div>
               </div>
@@ -580,7 +580,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                         );
                       })}
                     </svg>
-            </div>
+                  </div>
             
                   <div className={`mt-auto bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-200 dark:border-blue-800 ${isMobile ? 'text-xs' : ''}`}>
                     <p className="text-xs font-mono text-center text-gray-700 dark:text-white/80">
