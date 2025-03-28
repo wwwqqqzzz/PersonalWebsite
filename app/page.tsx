@@ -6,7 +6,7 @@ import Navigation from "@/components/navigation/index"
 import ProjectsTimeline from "@/components/sections/projects-timeline"
 import SkillsShowcase from "@/components/sections/skills-showcase"
 import BlogSection from "@/components/sections/blog-section"
-import ContactSection from "@/components/sections/chat-contact"
+import ChatContact from "@/components/sections/chat-contact"
 import Footer from "@/components/sections/footer"
 import { useTheme } from "next-themes"
 import { HeroScrollDemo } from "@/components/blocks/hero-scroll-demo"
@@ -171,7 +171,7 @@ export default function Portfolio() {
             
             {/* Contact部分 */}
             <div id="contact" ref={contactRef} className="max-w-7xl mx-auto py-16 px-6">
-              <ContactSection />
+              <ChatContact />
             </div>
             
             <div className="mt-16 px-6">

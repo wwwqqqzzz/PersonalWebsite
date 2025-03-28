@@ -227,7 +227,7 @@ export const BlogParallax = ({
     <div
       ref={ref}
       id="blog"
-      className="h-[160vh] py-60 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
+      className="h-[160vh] py-20 md:py-60 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
     >
       {/* 自动循环播放的背景 */}
       <div className="absolute inset-0 z-0 overflow-hidden opacity-60">
@@ -253,10 +253,10 @@ export const BlogParallax = ({
           translateY,
           opacity,
         }}
-        className="blog-parallax-container transform-3d-fix relative z-10 py-10"
+        className="blog-parallax-container transform-3d-fix relative z-10 py-6 md:py-10"
       >
         {/* 第一行：自动向左滚动 - 无缝轮播 */}
-        <div className="mb-36 overflow-hidden carousel-container"> 
+        <div className="mb-16 md:mb-36 overflow-hidden carousel-container"> 
           <motion.div 
             className={`flex space-x-16 high-performance-animation carousel-track left smooth will-change-transform ${!useFramerMotion ? 'css-fallback' : ''}`}
             animate={useFramerMotion ? controls1 : undefined}
@@ -279,7 +279,7 @@ export const BlogParallax = ({
         </div>
         
         {/* 第二行：自动向右滚动 - 无缝轮播 */}
-        <div className="mb-36 overflow-hidden carousel-container"> 
+        <div className="mb-16 md:mb-36 overflow-hidden carousel-container"> 
           <motion.div 
             className={`flex space-x-16 high-performance-animation carousel-track right smooth will-change-transform ${!useFramerMotion ? 'css-fallback' : ''}`}
             animate={useFramerMotion ? controls2 : undefined}
@@ -326,7 +326,7 @@ export const BlogParallax = ({
       </motion.div>
       
       {/* 底部间距 */}
-      <div className="h-40"></div>
+      <div className="h-20 md:h-40"></div>
     </div>
   )
 }
@@ -418,9 +418,9 @@ export const BlogCard = ({ post, translate, className }: BlogCardProps) => {
           {/* 渐变遮罩 */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-70 group-hover/blog:opacity-90 transition-opacity duration-200"></div>
           
-          {/* 文章信息 */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-4 group-hover/blog:translate-y-0 transition-transform duration-200">
-            <div className="flex items-center gap-3 mb-3 text-xs text-white/80">
+          {/* 文章信息 - 优化移动端显示 */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform translate-y-0 transition-transform duration-200">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2 md:mb-3 text-xs text-white/80">
               <span className="px-2 py-1 rounded-full bg-primary/50 text-white">
                 {post.category}
               </span>
@@ -434,11 +434,12 @@ export const BlogCard = ({ post, translate, className }: BlogCardProps) => {
               </div>
             </div>
             
-            <h2 className="text-lg font-medium text-white group-hover/blog:text-primary/90 transition-colors duration-200">
+            <h2 className="text-base md:text-lg font-medium text-white group-hover/blog:text-primary/90 transition-colors duration-200">
               {post.title}
             </h2>
             
-            <p className="mt-2 text-sm text-white/70 line-clamp-2 opacity-0 group-hover/blog:opacity-100 transition-opacity duration-200">
+            {/* 移动端默认显示摘要文本 */}
+            <p className="mt-2 text-xs md:text-sm text-white/70 line-clamp-2 md:opacity-0 md:group-hover/blog:opacity-100 transition-opacity duration-200">
               {post.excerpt}
             </p>
           </div>

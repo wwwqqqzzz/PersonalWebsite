@@ -1,9 +1,20 @@
 "use client"
 
-import { forwardRef, useEffect, useState } from "react"
+import { forwardRef, useEffect, useState, useRef } from "react"
 import { motion, useTransform, useMotionValue, useSpring, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import { useMousePosition } from "@/hooks/use-mouse-position"
+import { X } from "lucide-react"
+
+// 定义技能详情接口
+interface SkillDetail {
+  id: string
+  name: string
+  level: number
+  description: string
+  keyPoints: string[]
+  icon: string
+}
 
 interface AboutSectionProps {
   className?: string
@@ -20,7 +31,11 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
   // 添加卡片翻转状态
   const [isFlipped, setIsFlipped] = useState(false)
   const toggleFlip = () => setIsFlipped(!isFlipped)
-
+  
+  // 添加技能弹窗状态
+  const [activeSkill, setActiveSkill] = useState<SkillDetail | null>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
+  
   // 创建 MotionValue 实例，为了更平滑的动画，这里使用useSpring
   const mouseX = useSpring(0, { stiffness: 400, damping: 28 }) // 弹簧动画配置
   const mouseY = useSpring(0, { stiffness: 400, damping: 28 })
@@ -49,6 +64,117 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
     
   }, [mouse.x, mouse.y, mouseX, mouseY])
 
+  // 点击外部关闭弹窗
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        setActiveSkill(null)
+      }
+    }
+    
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  // 技能数据定义
+  const skillsData: SkillDetail[] = [
+    {
+      id: "heart-method",
+      name: "心法修炼",
+      level: 90,
+      description: "专注于深入理解前端核心技术，精通各种设计模式与最佳实践",
+      keyPoints: [
+        "精通现代化前端框架如React、Vue等",
+        "深入理解JavaScript引擎工作原理",
+        "掌握性能优化与调试技巧",
+        "能够设计可扩展的前端架构"
+      ],
+      icon: "💫"
+    },
+    {
+      id: "sword-forge",
+      name: "剑法锻造",
+      level: 85,
+      description: "精通工程化构建流程，能够打造高性能、可维护的代码库",
+      keyPoints: [
+        "熟练使用Webpack、Vite等构建工具",
+        "精通Git工作流与团队协作流程",
+        "掌握自动化测试与CI/CD流程",
+        "能够设计模块化、可扩展的代码结构"
+      ],
+      icon: "⚔️"
+    },
+    {
+      id: "equipment",
+      name: "器械掌握",
+      level: 80,
+      description: "精通各类前端工具与技术栈，能够快速适应不同项目需求",
+      keyPoints: [
+        "熟练使用TypeScript进行类型安全开发",
+        "掌握CSS预处理器与现代化样式解决方案",
+        "精通状态管理工具如Redux、Vuex等",
+        "能够集成各类第三方服务与API"
+      ],
+      icon: "🔧"
+    },
+    {
+      id: "absolute-focus",
+      name: "极致专注",
+      level: 95,
+      description: "能够深度沉浸在复杂问题中，持续优化解决方案直至完美",
+      keyPoints: [
+        "擅长解决复杂技术难题与边界情况",
+        "注重代码质量与用户体验细节",
+        "能够持续优化性能与可访问性",
+        "追求卓越的工程实践标准"
+      ],
+      icon: "🧠"
+    },
+    {
+      id: "debugging",
+      name: "调试顿悟",
+      level: 88,
+      description: "具备敏锐的问题定位能力，能快速找出并修复复杂bug",
+      keyPoints: [
+        "精通各类调试工具与技术",
+        "擅长分析性能瓶颈与内存泄漏",
+        "能够处理复杂的跨浏览器兼容性问题",
+        "具备系统性思维解决根本问题"
+      ],
+      icon: "⚡"
+    },
+    {
+      id: "source-code",
+      name: "源码参透",
+      level: 85,
+      description: "深入研究主流框架源码，理解底层实现原理",
+      keyPoints: [
+        "精通React、Vue等框架内部机制",
+        "了解浏览器渲染引擎工作原理",
+        "能够分析并优化第三方库性能",
+        "具备贡献开源项目的能力"
+      ],
+      icon: "🔮"
+    }
+  ]
+  
+  // 处理技能点击事件
+  const handleSkillClick = (skill: SkillDetail) => {
+    setActiveSkill(skill)
+  }
+  
+  // 检测是否为移动设备
+  const [isMobile, setIsMobile] = useState(false)
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   return (
     <motion.div
       ref={ref}
@@ -63,12 +189,25 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-[0.03]" />
       </div>
       
+      {/* 内容区域 - 移动端时设置固定高度和可滚动 */}
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-4xl mx-auto text-center space-y-16">
-          <div className="flex flex-col items-center space-y-12">
+        <div className={`max-w-4xl mx-auto text-center space-y-16 pb-8 ${isMobile ? 'h-[70vh] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent' : ''}`}>
+          {/* 移动端滚动提示 */}
+          {isMobile && (
+            <motion.div 
+              className="absolute top-0 right-4 text-xs text-primary/70 font-mono bg-background/50 px-2 py-1 rounded-b-md shadow-sm backdrop-blur-sm"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1, duration: 0.5 }}
+            >
+              向下滚动查看更多
+            </motion.div>
+          )}
+          
+          <div className="flex flex-col items-center space-y-12 pt-4">
             {/* 标题 */}
             <motion.h2
-              className="text-5xl md:text-6xl font-mono font-bold text-foreground relative inline-block"
+              className={`${isMobile ? 'text-4xl' : 'text-5xl md:text-6xl'} font-mono font-bold text-foreground relative inline-block`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "circOut" }}
@@ -80,7 +219,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
             </motion.h2>
 
             {/* 技术苦行僧身份卡片 - 视差动画效果 */}
-            <div className="w-[200px] h-[250px] rounded-xl overflow-hidden shadow-xl relative group transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:-rotate-1">
+            <div className={`${isMobile ? 'w-[180px] h-[220px]' : 'w-[200px] h-[250px]'} rounded-xl overflow-hidden shadow-xl relative group transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] hover:scale-105 hover:-rotate-1`}>
               {/* 卡片背景 */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100 dark:bg-[#1b2535] dark:bg-none z-0"></div>
               
@@ -109,7 +248,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                   blur-xl opacity-50 z-[2]"></div>
               
               {/* 头像区域 - 悬停时缩小并模糊 */}
-              <div className="mt-6 mx-auto w-28 h-28 relative flex items-center justify-center z-10 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-80 group-hover:blur-[3px] group-hover:-translate-y-3">
+              <div className={`mt-6 mx-auto ${isMobile ? 'w-24 h-24' : 'w-28 h-28'} relative flex items-center justify-center z-10 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-80 group-hover:blur-[3px] group-hover:-translate-y-3`}>
                 <div className="absolute inset-0 rounded-full 
                     bg-gradient-to-r from-indigo-500/40 to-purple-500/40 
                     dark:bg-gradient-to-r dark:from-purple-500/30 dark:to-blue-500/30
@@ -117,8 +256,8 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                 <Image
                   src="/avatar/技术苦行僧.png"
                   alt="技术苦行僧照片"
-                  width={120}
-                  height={120}
+                  width={isMobile ? 100 : 120}
+                  height={isMobile ? 100 : 120}
                   className="rounded-full object-cover relative z-10 
                       border-2 border-indigo-200/60
                       dark:border-2 dark:border-white/10"
@@ -206,7 +345,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
             </div>
           </div>
 
-          {/* 技能矩阵 - 三列交互设计 */}
+          {/* 技能矩阵 - 适配手机端的设计 */}
           <motion.div 
             className="w-full max-w-5xl mx-auto mt-16"
             initial={{ opacity: 0, y: 20 }}
@@ -218,15 +357,15 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
               技能矩阵
             </div>
             
-            <div className="flex flex-col md:flex-row gap-4 w-full">
-              {/* 修行武器卡片 - 始终显示内容 */}
-              <div className="bg-white/95 dark:bg-background/95 rounded-xl border border-purple-300 shadow-md overflow-hidden flex-1">
-                <div className="p-4 flex flex-col h-full">
+            <div className={`flex ${isMobile ? 'flex-col' : 'flex-col md:flex-row'} gap-4 w-full`}>
+              {/* 修行武器卡片 - 移动端样式优化 */}
+              <div className={`bg-white/95 dark:bg-background/95 rounded-xl border border-purple-300 shadow-md overflow-hidden flex-1 ${isMobile ? 'p-3' : 'p-4'}`}>
+                <div className="flex flex-col h-full">
                   <h3 className="text-purple-700 dark:text-purple-400 font-mono text-lg border-b border-purple-200 dark:border-purple-800 pb-2 mb-3">修行武器</h3>
                   
-                  {/* 静态经脉图 */}
+                  {/* 静态经脉图 - 移动端缩小 */}
                   <div className="flex justify-center mb-4">
-                    <svg width="160" height="90" viewBox="0 0 160 90">
+                    <svg width={isMobile ? "140" : "160"} height={isMobile ? "80" : "90"} viewBox="0 0 160 90">
                       <path 
                         d="M 80,10 C 30,25 30,45 80,60 C 130,75 130,75 80,80"
                         fill="none" 
@@ -261,34 +400,43 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                     </svg>
                   </div>
                   
-                  {/* 技能进度条 */}
+                  {/* 技能进度条 - 改为可点击 */}
                   <div className="space-y-3 mt-2">
                     <div className="w-full">
-                      <div className="flex justify-between text-sm font-mono items-center">
+                      <div 
+                        className="flex justify-between text-sm font-mono items-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 p-1 rounded-md transition-colors"
+                        onClick={() => handleSkillClick(skillsData[0])}  
+                      >
                         <span className="text-gray-700 dark:text-white/90">心法修炼</span>
                         <span className="text-purple-700 dark:text-purple-400">精通</span>
                       </div>
-                      <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1">
+                      <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1 cursor-pointer" onClick={() => handleSkillClick(skillsData[0])}>
                         <div className="h-full bg-purple-500 w-[90%]" />
                       </div>
                     </div>
                     
                     <div className="w-full">
-                      <div className="flex justify-between text-sm font-mono items-center">
+                      <div 
+                        className="flex justify-between text-sm font-mono items-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 p-1 rounded-md transition-colors"
+                        onClick={() => handleSkillClick(skillsData[1])}
+                      >
                         <span className="text-gray-700 dark:text-white/90">剑法锻造</span>
                         <span className="text-purple-700 dark:text-purple-400">纯熟</span>
                       </div>
-                      <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1">
+                      <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1 cursor-pointer" onClick={() => handleSkillClick(skillsData[1])}>
                         <div className="h-full bg-purple-500 w-[85%]" />
                       </div>
                     </div>
                     
                     <div className="w-full">
-                      <div className="flex justify-between text-sm font-mono items-center">
+                      <div 
+                        className="flex justify-between text-sm font-mono items-center cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 p-1 rounded-md transition-colors"
+                        onClick={() => handleSkillClick(skillsData[2])}
+                      >
                         <span className="text-gray-700 dark:text-white/90">器械掌握</span>
                         <span className="text-purple-700 dark:text-purple-400">熟练</span>
                       </div>
-                      <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1">
+                      <div className="w-full h-1.5 bg-purple-100 dark:bg-purple-900/20 rounded-full overflow-hidden mt-1 cursor-pointer" onClick={() => handleSkillClick(skillsData[2])}>
                         <div className="h-full bg-purple-500 w-[80%]" />
                       </div>
                     </div>
@@ -296,15 +444,15 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                 </div>
               </div>
 
-              {/* 修行哲学卡片 - 始终显示内容 */}
-              <div className="bg-white/95 dark:bg-background/95 rounded-xl border border-indigo-300 shadow-md overflow-hidden flex-1">
-                <div className="p-4 flex flex-col h-full">
+              {/* 修行哲学卡片 */}
+              <div className={`bg-white/95 dark:bg-background/95 rounded-xl border border-indigo-300 shadow-md overflow-hidden flex-1 ${isMobile ? 'p-3' : 'p-4'}`}>
+                <div className="flex flex-col h-full">
                   <h3 className="text-indigo-700 dark:text-indigo-400 font-mono text-lg border-b border-indigo-200 dark:border-indigo-800 pb-2 mb-3">修行哲学</h3>
                   
                   {/* 静态太极图 */}
                   <div className="flex items-center gap-4 mb-4">
                     <div className="relative">
-                      <svg width="60" height="60" viewBox="0 0 100 100">
+                      <svg width={isMobile ? "50" : "60"} height={isMobile ? "50" : "60"} viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="48" stroke="#4f46e5" strokeWidth="1.5" fill="none" />
                         
                         {/* 简化的太极图案 */}
@@ -345,8 +493,8 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                         key={index}
                         className="flex flex-col items-center"
                       >
-                        <div className="w-10 h-10 mb-1 flex items-center justify-center bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded">
-                          <span className="text-lg font-bold text-indigo-700 dark:text-indigo-400">
+                        <div className={`${isMobile ? 'w-8 h-8' : 'w-10 h-10'} mb-1 flex items-center justify-center bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 rounded`}>
+                          <span className={`${isMobile ? 'text-base' : 'text-lg'} font-bold text-indigo-700 dark:text-indigo-400`}>
                             {item.symbol}
                           </span>
                         </div>
@@ -357,15 +505,15 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                 </div>
               </div>
 
-              {/* 隐世绝技卡片 - 始终显示内容 */}
-              <div className="bg-white/95 dark:bg-background/95 rounded-xl border border-blue-300 shadow-md overflow-hidden flex-1">
-                <div className="p-4 flex flex-col h-full">
+              {/* 隐世绝技卡片 */}
+              <div className={`bg-white/95 dark:bg-background/95 rounded-xl border border-blue-300 shadow-md overflow-hidden flex-1 ${isMobile ? 'p-3' : 'p-4'}`}>
+                <div className="flex flex-col h-full">
                   <h3 className="text-blue-700 dark:text-blue-400 font-mono text-lg border-b border-blue-200 dark:border-blue-800 pb-2 mb-3">隐世绝技</h3>
                   
-                  {/* 简化八卦图 */}
+                  {/* 简化八卦图 - 移动端缩小 */}
                   <div className="flex justify-center mb-3">
-                    <svg width="160" height="160" viewBox="0 0 200 200">
-                      {/* 外圈 */}
+                    <svg width={isMobile ? "140" : "160"} height={isMobile ? "140" : "160"} viewBox="0 0 200 200">
+                      {/* SVG内容保持不变 */}
                       <circle cx="100" cy="100" r="90" fill="none" stroke="#3b82f6" strokeWidth="1" strokeDasharray="4 2" />
                       
                       {/* 内圈 */}
@@ -380,7 +528,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                       <line x1="29" y1="29" x2="171" y2="171" stroke="#3b82f6" strokeWidth="0.8" />
                       <line x1="29" y1="171" x2="171" y2="29" stroke="#3b82f6" strokeWidth="0.8" />
                       
-                      {/* 八个技能点 - 静态设计 */}
+                      {/* 八个技能点 - 静态设计 改为可点击 */}
                       {[
                         { icon: "⚡", label: "调试顿悟", angle: 0 },
                         { icon: "🔮", label: "源码参透", angle: 45 },
@@ -397,7 +545,12 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                         const y = 100 + distance * Math.sin(angleRad);
                         
                         return (
-                          <g key={index}>
+                          <g 
+                            key={index}
+                            onClick={() => handleSkillClick(skillsData[index + 3 > 5 ? 5 : index + 3])}
+                            style={{ cursor: 'pointer' }}
+                            className="hover:opacity-80 transition-opacity"
+                          >
                             <circle 
                               cx={x} cy={y} r="12" 
                               fill="#bfdbfe"
@@ -429,7 +582,7 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                     </svg>
             </div>
             
-                  <div className="mt-auto bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className={`mt-auto bg-blue-50 dark:bg-blue-900/20 p-2 rounded-lg border border-blue-200 dark:border-blue-800 ${isMobile ? 'text-xs' : ''}`}>
                     <p className="text-xs font-mono text-center text-gray-700 dark:text-white/80">
                       得<span className="text-blue-700 dark:text-blue-400">武林秘籍</span>，渡重重险阻，遇明师点拨，终成一代宗师
                     </p>
@@ -439,9 +592,9 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
             </div>
           </motion.div>
 
-          {/* 发展路线 */}
+          {/* 发展路线 - 移动端优化 */}
           <motion.div
-            className="mt-48"
+            className={`${isMobile ? 'mt-8' : 'mt-48'}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
@@ -451,6 +604,27 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                 <span className="text-foreground/50 text-lg">...</span>
               </div>
 
+              {/* 路线点优化 */}
+              {isMobile ? (
+                <div className="flex justify-between py-8">
+                  {[
+                    { name: "代码鬣狗", position: "top" },
+                    { name: "外包豺狼", position: "bottom" },
+                    { name: "技术秃鹫", position: "top" },
+                    { name: "赛博巫妖", position: "bottom" }
+                  ].map((item, index) => (
+                    <div 
+                      key={index} 
+                      className={`relative text-xs font-mono ${item.position === 'top' ? '-translate-y-6' : 'translate-y-6'}`}
+                    >
+                      <div className={`absolute ${item.position === 'top' ? '-bottom-4' : '-top-4'} left-1/2 -translate-x-1/2 w-[1px] h-3 bg-primary/30`} />
+                      <div className={`absolute ${item.position === 'top' ? '-bottom-2' : '-top-2'} left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-primary/50 rounded-full`} />
+                      <span className="text-foreground/70">{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <>
               {/* 代码鬣狗 */}
               <div className="absolute left-[15%] -translate-y-8 text-sm font-mono">
                 <motion.div 
@@ -498,6 +672,8 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
                   <span className="text-foreground/70 group-hover:text-primary transition-colors">赛博巫妖</span>
                 </motion.div>
               </div>
+                </>
+              )}
 
               <div className="absolute -right-4 top-1/2 -translate-y-1/2">
                 <span className="text-foreground/50 text-lg">...</span>
@@ -505,20 +681,110 @@ const AboutSection = forwardRef<HTMLDivElement, AboutSectionProps>((props, ref) 
 
               {/* 当前进度标记 */}
               <motion.div 
-                className="absolute left-[26.5%] top-1/2 -translate-y-1/2"
+                className={`absolute ${isMobile ? 'left-[26%]' : 'left-[26.5%]'} top-1/2 -translate-y-1/2`}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 1.2, type: "spring" }}
               >
                 <div className="relative">
-                  <div className="w-4 h-4 rounded-full bg-primary/30 animate-ping absolute inset-0" />
-                  <div className="w-4 h-4 rounded-full bg-primary relative" />
+                  <div className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} rounded-full bg-primary/30 animate-ping absolute inset-0`} />
+                  <div className={`${isMobile ? 'w-3 h-3' : 'w-4 h-4'} rounded-full bg-primary relative`} />
                 </div>
               </motion.div>
             </div>
           </motion.div>
         </div>
       </div>
+
+      {/* 技能详情弹窗 */}
+      <AnimatePresence>
+        {activeSkill && (
+          <>
+            {/* 半透明遮罩 */}
+            <motion.div
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveSkill(null)}
+            />
+            
+            {/* 弹窗内容 */}
+        <motion.div
+              ref={modalRef}
+              className={`fixed ${isMobile ? 'w-[90%] max-w-[350px]' : 'w-[400px]'} max-h-[80vh] overflow-y-auto z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ type: "spring", bounce: 0.25 }}
+            >
+              {/* 弹窗头部 */}
+              <div className="relative p-4 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full">
+                    <span className="text-xl">{activeSkill.icon}</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">{activeSkill.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary rounded-full"
+                          style={{ width: `${activeSkill.level}%` }} 
+        />
+      </div>
+                      <span className="text-xs font-mono text-gray-500 dark:text-gray-400">
+                        {activeSkill.level}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 关闭按钮 */}
+                <button 
+                  className="absolute top-4 right-4 w-6 h-6 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  onClick={() => setActiveSkill(null)}
+                >
+                  <X size={14} className="text-gray-500 dark:text-gray-400" />
+                </button>
+              </div>
+              
+              {/* 弹窗内容 */}
+              <div className="p-4 space-y-4">
+                {/* 技能描述 */}
+                <div>
+                  <p className="text-gray-700 dark:text-gray-300 text-sm">
+                    {activeSkill.description}
+                  </p>
+                </div>
+                
+                {/* 主要技能点 */}
+                <div className="space-y-2">
+                  <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200">核心能力</h4>
+                  <ul className="space-y-2">
+                    {activeSkill.keyPoints.map((point, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span className="text-sm text-gray-700 dark:text-gray-300">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                {/* 底部装饰性元素 */}
+                <div className="pt-2 mt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex justify-between items-center">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 font-mono">技能.ID: {activeSkill.id}</div>
+                    <div className="text-xs text-primary/70 font-mono">
+                      点击空白区域关闭
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 })
