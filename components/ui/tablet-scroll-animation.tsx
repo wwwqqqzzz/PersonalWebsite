@@ -22,6 +22,7 @@ interface TabletCardProps {
   borderWidth: MotionValue<number>;
   avatarComponent?: React.ReactNode;
   children: React.ReactNode;
+  rotateZ: MotionValue<number>;
 }
 
 // 主滚动容器组件
@@ -84,14 +85,10 @@ export function TabletScroll({ titleComponent, avatarComponent, children }: Tabl
   const translateY = useSpring(rawTranslateY, { damping: 30, stiffness: 200 });
   const opacity = useSpring(rawOpacity, { damping: 30, stiffness: 200 });
   const borderWidth = useSpring(rawBorderWidth, { damping: 30, stiffness: 200 });
-  
-  // 内容垂直偏移，防止变形时内容被裁切
-  const rawContentOffsetY = useTransform(scrollY, scrollTrigger, [35, 0]);
-  const contentOffsetY = useSpring(rawContentOffsetY, { damping: 30, stiffness: 200 });
 
   return (
     <div
-      className="h-[950px] w-full flex flex-col items-center justify-start relative tablet-container"
+      className="h-[1100px] w-full flex flex-col items-center justify-start relative tablet-container"
       ref={containerRef}
       id="about"
     >
@@ -109,12 +106,9 @@ export function TabletScroll({ titleComponent, avatarComponent, children }: Tabl
           scale={scale} 
           opacity={opacity}
           borderWidth={borderWidth}
-          avatarComponent={avatarComponent}
+          rotateZ={rotateX}
         >
-          {/* 添加内容偏移容器，确保内容随变形适配 */}
-          <motion.div style={{ translateY: contentOffsetY }} className="transform-gpu">
-            {children}
-          </motion.div>
+          {children}
         </TabletCard>
       </div>
     </div>
@@ -143,23 +137,8 @@ function TabletCard({
   translate, 
   opacity,
   borderWidth,
-  avatarComponent,
   children 
-}: TabletCardProps) {
-  // 计算阴影效果值
-  const [shadowOpacityValue, setShadowOpacityValue] = useState(0.3);
-  
-  // 监听rotateX的变化来更新阴影不透明度
-  useEffect(() => {
-    const unsubscribe = rotateX.onChange((latest: number) => {
-      // 将rotateX值缩放到0.3-0.5的范围 (20deg→0.5, 0deg→0.3)
-      const newOpacity = 0.3 + ((latest / 20) * 0.2);
-      setShadowOpacityValue(newOpacity);
-    });
-    
-    return () => unsubscribe();
-  }, [rotateX]);
-  
+}: Omit<TabletCardProps, 'avatarComponent'>) {
   return (
     <motion.div
       style={{
@@ -170,21 +149,18 @@ function TabletCard({
         perspective,
         transformOrigin: "center bottom",
       }}
-      className="max-w-7xl mx-auto h-[850px] w-full relative rounded-[2rem] overflow-hidden transform-gpu will-change-transform"
+      className="max-w-7xl mx-auto h-[950px] w-full relative rounded-[2rem] overflow-hidden transform-gpu will-change-transform"
       initial={{ y: 0 }}
     >
       {/* 红色边框框架 */}
       <motion.div 
         className="absolute inset-0 rounded-[2rem] bg-background shadow-2xl overflow-hidden transform-gpu tablet-frame"
         style={{
-          borderWidth,
-          borderColor: "rgb(239 68 68)",
-          borderStyle: "solid",
+          border: "4px solid rgb(239 68 68)",
+          boxShadow: "0 0 8px 2px rgba(239, 68, 68, 0.6)",
+          backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.9), rgba(30,20,60,0.9))',
         }}
       >
-        {/* 添加一个标记，用于头像定位到上边框 */}
-        <div className="tablet-frame-top-border absolute top-0 left-0 right-0 h-1 pointer-events-none opacity-0"></div>
-        
         {/* 顶部反光效果 - 随梯形变化而变化 */}
         <motion.div 
           className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-foreground/10 to-transparent pointer-events-none transform-gpu"
@@ -192,6 +168,13 @@ function TabletCard({
             opacity: useTransform(rotateX, [20, 0], [0.7, 0.2])
           }}
         />
+        
+        {/* 赛博朋克风格的背景元素 */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-cyan-900/20"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full filter blur-xl transform translate-x-10 -translate-y-10"></div>
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-pink-500/10 rounded-full filter blur-xl transform -translate-x-10 translate-y-10"></div>
+        </div>
         
         {/* 梯形变换效果的视觉提示 - 顶部和底部边缘 */}
         <motion.div 
@@ -208,9 +191,9 @@ function TabletCard({
           }}
         />
         
-        {/* 内容区域 - 减少顶部内边距 */}
-        <div className="absolute inset-0 p-6 md:p-10 overflow-hidden transform-gpu">
-          <div className="h-full w-full overflow-auto scrollbar-hide pt-4 transform-gpu">
+        {/* 内容区域 - 固定内容不可滚动 */}
+        <div className="absolute inset-0 p-6 pb-16 md:p-10 md:pb-20 overflow-hidden transform-gpu">
+          <div className="h-full w-full overflow-hidden transform-gpu">
             {children}
           </div>
         </div>
@@ -218,12 +201,12 @@ function TabletCard({
       
       {/* 投影效果 - 根据rotateX变化 */}
       <motion.div 
-        className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[95%] h-16 bg-black/30 dark:bg-black/50 blur-xl rounded-full transform-gpu"
+        className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[95%] h-16 bg-black/30 dark:bg-black/50 blur-xl rounded-full transform-gpu"
         style={{
           scaleY: useTransform(rotateX, [20, 0], [0.4, 1]),
           scaleX: useTransform(rotateX, [20, 0], [0.85, 1.05]),
           translateY: useTransform(rotateX, [20, 0], [30, 0]),
-          opacity: shadowOpacityValue
+          opacity: 0.5
         }}
       />
     </motion.div>

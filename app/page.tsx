@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion"
 import Navigation from "@/components/navigation/index"
-import ProjectsTimeline from "@/components/sections/projects-timeline"
+import ProjectsSketch from "@/components/sections/projects-sketch"
 import SkillsShowcase from "@/components/sections/skills-showcase"
 import BlogSection from "@/components/sections/blog-section"
 import ChatContact from "@/components/sections/chat-contact"
@@ -11,6 +11,8 @@ import Footer from "@/components/sections/footer"
 import { useTheme } from "next-themes"
 import { HeroScrollDemo } from "@/components/blocks/hero-scroll-demo"
 import { ScrollEffectDemo } from "@/components/blocks/scroll-effect-demo"
+import Link from "next/link"
+import { Palette } from "lucide-react"
 
 export default function Portfolio() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -155,8 +157,8 @@ export default function Portfolio() {
           {/* 其他正常布局的部分 */}
           <div className="bg-background">
             {/* Projects部分 */}
-            <div id="projects" ref={projectsRef} className="max-w-7xl mx-auto py-24 px-6">
-              <ProjectsTimeline />
+            <div id="projects" ref={projectsRef} className="py-0">
+              <ProjectsSketch />
             </div>
             
             {/* Skills部分 */}
@@ -176,6 +178,19 @@ export default function Portfolio() {
             
             <div className="mt-16 px-6">
               <Footer />
+              
+              {/* 添加赛博朋克入口 */}
+              <div className="mt-8 text-center">
+                <Link href="/about-cyberpunk">
+                  <motion.div 
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 backdrop-blur-md rounded-full border border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/20 transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span className="text-sm font-medium">查看赛博朋克风格</span>
+                  </motion.div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

@@ -17,6 +17,9 @@ module.exports = {
       },
     },
     extend: {
+      fontFamily: {
+        handwriting: ["var(--font-caveat)", "var(--font-kalam)", "Patrick Hand", "Comic Sans MS", "cursive"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

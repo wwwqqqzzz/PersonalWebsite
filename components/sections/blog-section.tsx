@@ -227,16 +227,16 @@ export const BlogParallax = ({
     <div
       ref={ref}
       id="blog"
-      className="h-[160vh] py-20 md:py-60 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d]"
+      className="h-[160vh] py-20 md:py-60 overflow-hidden antialiased relative flex flex-col self-auto [perspective:1000px] [transform-style:preserve-3d] bg-gray-50 dark:bg-gray-900/30"
     >
-      {/* 自动循环播放的背景 */}
-      <div className="absolute inset-0 z-0 overflow-hidden opacity-60">
+      {/* 简化的背景图案 */}
+      <div className="absolute inset-0 z-0 overflow-hidden opacity-30">
         <motion.div 
           ref={backgroundRef}
           className="absolute inset-0 w-[200%] h-full"
           animate={bgControls}
           style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
             backgroundSize: "60px 60px",
           }}
         />
@@ -256,17 +256,17 @@ export const BlogParallax = ({
         className="blog-parallax-container transform-3d-fix relative z-10 py-6 md:py-10"
       >
         {/* 第一行：自动向左滚动 - 无缝轮播 */}
-        <div className="mb-16 md:mb-36 overflow-hidden carousel-container"> 
+        <div className="mb-10 md:mb-20 overflow-hidden carousel-container"> 
           <motion.div 
-            className={`flex space-x-16 high-performance-animation carousel-track left smooth will-change-transform ${!useFramerMotion ? 'css-fallback' : ''}`}
+            className={`flex space-x-8 high-performance-animation carousel-track left smooth will-change-transform ${!useFramerMotion ? 'css-fallback' : ''}`}
             animate={useFramerMotion ? controls1 : undefined}
             initial={useFramerMotion ? { x: "0%" } : undefined}
             style={{ 
               width: `${extendedFirstRow.length * 510}px`,
-              transform: "translate3d(0, 0, 0)" // 启用GPU加速
+              transform: "translate3d(0, 0, 0)"
             }}
             onAnimationComplete={() => {/* 循环动画回调 */}}
-            onError={handleAnimationError} // 处理动画错误
+            onError={handleAnimationError}
           >
             {extendedFirstRow.map((post, index) => (
               <BlogCard 
@@ -279,17 +279,17 @@ export const BlogParallax = ({
         </div>
         
         {/* 第二行：自动向右滚动 - 无缝轮播 */}
-        <div className="mb-16 md:mb-36 overflow-hidden carousel-container"> 
+        <div className="mb-10 md:mb-20 overflow-hidden carousel-container"> 
           <motion.div 
-            className={`flex space-x-16 high-performance-animation carousel-track right smooth will-change-transform ${!useFramerMotion ? 'css-fallback' : ''}`}
+            className={`flex space-x-8 high-performance-animation carousel-track right smooth will-change-transform ${!useFramerMotion ? 'css-fallback' : ''}`}
             animate={useFramerMotion ? controls2 : undefined}
             initial={useFramerMotion ? { x: "-100%" } : undefined}
             style={{ 
               width: `${extendedSecondRow.length * 510}px`,
-              transform: "translate3d(0, 0, 0)" // 启用GPU加速
+              transform: "translate3d(0, 0, 0)"
             }}
             onAnimationComplete={() => {/* 循环动画回调 */}}
-            onError={handleAnimationError} // 处理动画错误
+            onError={handleAnimationError}
           >
             {extendedSecondRow.map((post, index) => (
               <BlogCard 
@@ -304,15 +304,15 @@ export const BlogParallax = ({
         {/* 第三行：自动向左滚动 - 无缝轮播 */}
         <div className="overflow-hidden carousel-container">
           <motion.div 
-            className={`flex space-x-16 high-performance-animation carousel-track left smooth will-change-transform ${!useFramerMotion ? 'css-fallback' : ''}`}
+            className={`flex space-x-8 high-performance-animation carousel-track left smooth will-change-transform ${!useFramerMotion ? 'css-fallback' : ''}`}
             animate={useFramerMotion ? controls3 : undefined}
             initial={useFramerMotion ? { x: "0%" } : undefined}
             style={{ 
               width: `${extendedThirdRow.length * 510}px`,
-              transform: "translate3d(0, 0, 0)" // 启用GPU加速
+              transform: "translate3d(0, 0, 0)"
             }}
             onAnimationComplete={() => {/* 循环动画回调 */}}
-            onError={handleAnimationError} // 处理动画错误
+            onError={handleAnimationError}
           >
             {extendedThirdRow.map((post, index) => (
               <BlogCard 
@@ -337,34 +337,34 @@ export const BlogHeader = () => {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.2 }}
-      className="max-w-7xl relative mx-auto px-4 w-full"
+      className="max-w-5xl relative mx-auto px-4 w-full"
     >
       <div className="text-center">
         <motion.h1 
-          className="text-2xl md:text-7xl font-bold dark:text-white mb-6"
+          className="text-2xl md:text-4xl font-bold dark:text-white mb-4"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.3 }}
         >
-          探索 
+          我的博客
         </motion.h1>
         <motion.h1 
-          className="text-3xl md:text-8xl font-bold mb-10"
+          className="text-3xl md:text-5xl font-bold mb-6"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
         >
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-purple-400 to-pink-500 drop-shadow-sm text-gradient-animate">
-            设计与技术的边界
+          <span className="text-gray-900 dark:text-white">
+            思考与见解
           </span>
         </motion.h1>
         <motion.p 
-          className="max-w-2xl text-base md:text-xl mx-auto text-foreground/80 leading-relaxed"
+          className="max-w-2xl text-base md:text-lg mx-auto text-gray-600 dark:text-gray-300 leading-relaxed"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.7 }}
         >
-          分享我对设计、开发和创意领域的思考与洞察，探索技术与艺术交汇处的无限可能。
+          分享我对设计、开发和创意领域的观点，记录职业成长的思考与经验。
         </motion.p>
       </div>
     </motion.div>
@@ -378,7 +378,7 @@ interface BlogCardProps {
   className?: string;
 }
 
-// 修改BlogCard组件接收正确的props类型
+// 修改博客卡片风格，保留动画效果
 export const BlogCard = ({ post, translate, className }: BlogCardProps) => {
   // 使用动态style对象创建，这样即使translate不存在也不会报错
   const style: MotionStyle = {};
@@ -402,46 +402,52 @@ export const BlogCard = ({ post, translate, className }: BlogCardProps) => {
         }
       }}
       key={post.id}
-      className={`group/blog h-96 w-[30rem] relative flex-shrink-0 gpu-accelerated blog-card-border-glow ${className || ''}`}
+      className={`group/blog h-96 w-[30rem] relative flex-shrink-0 gpu-accelerated ${className || ''}`}
     >
-      <Link href={post.link} className="block group-hover/blog:shadow-2xl h-full">
-        <div className="relative h-full w-full overflow-hidden rounded-xl">
-          <Image
-            src={post.thumbnail}
-            height="600"
-            width="600"
-            className="object-cover object-center absolute h-full w-full inset-0 transform img-hover-animation"
-            alt={post.title}
-            priority={post.id <= 5} // 优先加载前5张图片
-          />
+      <Link href={post.link} className="block h-full">
+        <div className="relative h-full w-full overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow-md transition-shadow duration-300 group-hover/blog:shadow-xl">
+          <div className="relative h-1/2 w-full overflow-hidden">
+            <Image
+              src={post.thumbnail}
+              height="600"
+              width="600"
+              className="object-cover object-center h-full w-full transition-transform duration-500 group-hover/blog:scale-110"
+              alt={post.title}
+              priority={post.id <= 5}
+            />
+          </div>
           
-          {/* 渐变遮罩 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent opacity-70 group-hover/blog:opacity-90 transition-opacity duration-200"></div>
-          
-          {/* 文章信息 - 优化移动端显示 */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 transform translate-y-0 transition-transform duration-200">
-            <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2 md:mb-3 text-xs text-white/80">
-              <span className="px-2 py-1 rounded-full bg-primary/50 text-white">
+          <div className="p-5 h-1/2 flex flex-col">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-medium px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-full">
                 {post.category}
               </span>
-              <div className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {post.date}
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {post.readTime}
+              <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-3">
+                <div className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  {post.date}
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {post.readTime}
+                </div>
               </div>
             </div>
             
-            <h2 className="text-base md:text-lg font-medium text-white group-hover/blog:text-primary/90 transition-colors duration-200">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover/blog:text-blue-600 dark:group-hover/blog:text-blue-400 transition-colors duration-200">
               {post.title}
             </h2>
             
-            {/* 移动端默认显示摘要文本 */}
-            <p className="mt-2 text-xs md:text-sm text-white/70 line-clamp-2 md:opacity-0 md:group-hover/blog:opacity-100 transition-opacity duration-200">
+            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3 flex-grow">
               {post.excerpt}
             </p>
+            
+            <div className="text-sm font-medium text-blue-600 dark:text-blue-400 opacity-0 group-hover/blog:opacity-100 transition-opacity duration-200 flex items-center">
+              阅读更多
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
           </div>
         </div>
       </Link>
