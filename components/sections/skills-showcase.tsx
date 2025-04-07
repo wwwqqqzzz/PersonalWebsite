@@ -154,7 +154,10 @@ const SkillCard = ({
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4 }}
+      whileHover={{ 
+        y: -6,
+        transition: { type: "spring", stiffness: 300, damping: 15 }
+      }}
       transition={{ duration: 0.3 }}
       onClick={onClick}
       className={`
@@ -162,21 +165,24 @@ const SkillCard = ({
         border border-gray-200/10 dark:border-gray-800/40
         ${isActive 
           ? `bg-gradient-to-br ${category.color}/10 dark:${category.color}/5` 
-          : 'bg-white/5 dark:bg-gray-900/40'
+          : 'bg-white/5 dark:bg-gray-900/40 hover:bg-gradient-to-br hover:${category.color}/10 dark:hover:${category.color}/5'
         }
         backdrop-blur-sm
         transition-all duration-300
+        group
       `}
     >
       <div className="p-6">
         <div className={`
           flex items-center justify-center w-10 h-10 rounded-full mb-4
-          bg-${colorClass}/10 text-${colorClass}
+          bg-${colorClass}/10 text-${colorClass} 
+          group-hover:bg-${colorClass}/20 group-hover:text-${colorClass}
+          transform transition-all duration-300 group-hover:scale-110
         `}>
           {category.icon}
         </div>
         
-        <h3 className="text-lg font-medium mb-2">{category.name}</h3>
+        <h3 className={`text-lg font-medium mb-2 transition-colors duration-300 group-hover:text-${colorClass}`}>{category.name}</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">
           {category.description}
         </p>
@@ -187,16 +193,19 @@ const SkillCard = ({
           </span>
           
           <div className={`
-            text-xs px-2 py-1 rounded
+            text-xs px-2 py-1 rounded transition-all duration-300
             ${isActive 
               ? `bg-${colorClass}/20 text-${colorClass}` 
-              : 'bg-gray-100/10 text-gray-400'
+              : `bg-gray-100/10 text-gray-400 group-hover:bg-${colorClass}/20 group-hover:text-${colorClass}`
             }
           `}>
             {isActive ? '已选择' : '查看详情'}
           </div>
         </div>
       </div>
+      
+      {/* 悬浮时的边框发光效果 */}
+      <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 border-2 border-${colorClass} rounded-lg`} style={{boxShadow: `0 0 15px rgba(var(--${colorClass}-rgb), 0.3)`}}></div>
     </motion.div>
   );
 };
