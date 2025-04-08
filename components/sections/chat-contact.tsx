@@ -191,6 +191,19 @@ const ChatContact = forwardRef<HTMLDivElement, ChatContactProps>((props, ref) =>
   const inputRef = useRef<HTMLInputElement>(null)
   const [activeSection, setActiveSection] = useState("ai")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [userId, setUserId] = useState<string>('')
+
+  useEffect(() => {
+    // 组件加载时从localStorage获取或生成用户ID
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+    } else {
+      const newUserId = 'user_' + Math.random().toString(36).substring(2, 15);
+      localStorage.setItem('userId', newUserId);
+      setUserId(newUserId);
+    }
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -224,8 +237,10 @@ const ChatContact = forwardRef<HTMLDivElement, ChatContactProps>((props, ref) =>
     }
 
     try {
-      // 调用通义千问API
-      const response = await chatWithQianwen(inputValue)
+      console.log("开始调用聊天API...");
+      // 调用通义千问API，传递用户ID
+      const response = await chatWithQianwen(inputValue, userId)
+      console.log("聊天API返回结果:", response);
       
       const botResponse: Message = {
         id: messages.length + 2,
@@ -237,6 +252,7 @@ const ChatContact = forwardRef<HTMLDivElement, ChatContactProps>((props, ref) =>
 
       setMessages((prev) => [...prev, botResponse])
     } catch (error) {
+      console.error("聊天API调用失败:", error);
       const errorMessage: Message = {
         id: messages.length + 2,
         type: "bot",

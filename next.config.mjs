@@ -21,7 +21,10 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
-  output: 'export',
+  // output: 'export', // 注释掉静态导出配置，启用API路由支持
+  // 根据环境使用不同的basePath配置
+  basePath: process.env.NODE_ENV === 'development' ? '' : '/portfolio',
+  trailingSlash: true,
 }
 
 mergeConfig(nextConfig, userConfig)
